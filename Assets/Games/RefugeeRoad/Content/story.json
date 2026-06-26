@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "startNodeId": "border",
+  "nodes": [
+    {
+      "id": "border",
+      "speaker": "narrator",
+      "body": "You reach the border at dusk. The guards look as hungry as you are.",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Share your rations",
+          "effects": [
+            { "resource": "food", "delta": -2 },
+            { "resource": "hope", "delta": 1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "Slip past in the dark",
+          "effects": [
+            { "resource": "health", "delta": -1 },
+            { "resource": "fuel", "delta": -1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "checkpoint",
+      "speaker": "narrator",
+      "body": "A checkpoint blocks the only paved road out.",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Wait for nightfall",
+          "effects": [
+            { "resource": "food", "delta": -1 },
+            { "resource": "hope", "delta": -1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "Take the mountain track",
+          "effects": [
+            { "resource": "fuel", "delta": -2 },
+            { "resource": "health", "delta": -1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "forest",
+      "speaker": "narrator",
+      "body": "The forest swallows the road. The fuel gauge hovers near empty.",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Make camp and forage",
+          "effects": [
+            { "resource": "food", "delta": 2 },
+            { "resource": "health", "delta": -1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "Push through the night",
+          "effects": [
+            { "resource": "fuel", "delta": -1 },
+            { "resource": "hope", "delta": -1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "river",
+      "speaker": "narrator",
+      "body": "A wide river, and no bridge left standing. The current runs fast.",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Ford it on foot",
+          "effects": [
+            { "resource": "health", "delta": -2 },
+            { "resource": "hope", "delta": 1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "Drive the long way around",
+          "effects": [
+            { "resource": "fuel", "delta": -2 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "town",
+      "speaker": "narrator",
+      "body": "A ruined town. Someone left supplies in the square - or a trap.",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Scavenge carefully",
+          "effects": [
+            { "resource": "food", "delta": 2 },
+            { "resource": "hope", "delta": 1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "Keep moving",
+          "effects": [
+            { "resource": "hope", "delta": -1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "haven",
+      "speaker": "narrator",
+      "body": "The lights of the relief camp rise over the final ridge.",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Walk in",
+          "effects": [ { "resource": "hope", "delta": 1 } ]
+        },
+        {
+          "side": "right",
+          "label": "Walk in",
+          "effects": [ { "resource": "hope", "delta": 1 } ]
+        }
+      ]
+    }
+  ],
+  "endings": [
+    { "when": { "resource": "fuel", "edge": "min" }, "text": "The tank runs dry on an empty road. The journey ends here." },
+    { "when": { "resource": "food", "edge": "min" }, "text": "Hunger takes hold, and the road takes the rest." },
+    { "when": { "resource": "health", "edge": "min" }, "text": "Your body gives out before the border does." },
+    { "when": { "resource": "hope", "edge": "min" }, "text": "One grey morning you simply stop walking. The road wins." },
+    { "when": { "reachedGoal": true }, "text": "You cross into the relief camp at dawn. You made it. You are safe." },
+    { "fallback": true, "text": "The road goes on, and somehow, so do you." }
+  ]
+}

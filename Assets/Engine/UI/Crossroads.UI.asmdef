@@ -1,0 +1,14 @@
+{
+    "name": "Crossroads.UI",
+    "rootNamespace": "Crossroads.UI",
+    "references": ["Crossroads.Engine", "Unity.InputSystem", "Unity.TextMeshPro"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,14 @@
+{
+    "name": "Crossroads.Game.Template",
+    "rootNamespace": "Crossroads.Game.Template",
+    "references": ["Crossroads.Engine", "Crossroads.UI"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

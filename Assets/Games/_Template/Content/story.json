@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "startNodeId": "intro_01",
+  "nodes": [
+    {
+      "id": "intro_01",
+      "speaker": "narrator",
+      "body": "A new day begins. What pace will you set?",
+      "weight": 1,
+      "choices": [
+        {
+          "side": "left",
+          "label": "Rest",
+          "effects": [
+            { "resource": "energy", "delta": 2 },
+            { "resource": "calm", "delta": 1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "Start working",
+          "effects": [
+            { "resource": "energy", "delta": -2 },
+            { "resource": "calm", "delta": -1 }
+          ],
+          "setFlags": { "started_work": true }
+        }
+      ]
+    },
+    {
+      "id": "work_push",
+      "speaker": "narrator",
+      "body": "You are in the zone now. You could push a little more.",
+      "appearWhen": {
+        "allOf": [
+          { "flag": "started_work", "is": true },
+          { "resource": "energy", "op": ">=", "value": 1 }
+        ]
+      },
+      "choices": [
+        {
+          "side": "left",
+          "label": "Take a break",
+          "effects": [ { "resource": "energy", "delta": 1 } ]
+        },
+        {
+          "side": "right",
+          "label": "Push hard",
+          "effects": [
+            { "resource": "energy", "delta": -3 },
+            { "resource": "calm", "delta": -2 }
+          ],
+          "next": "burnout_check"
+        }
+      ]
+    },
+    {
+      "id": "burnout_check",
+      "speaker": "narrator",
+      "body": "Your head is starting to tire. Slow down?",
+      "choices": [
+        {
+          "side": "left",
+          "label": "Slow down",
+          "effects": [ { "resource": "calm", "delta": 2 } ]
+        },
+        {
+          "side": "right",
+          "label": "Keep going",
+          "effects": [ { "resource": "calm", "delta": -2 } ]
+        }
+      ]
+    }
+  ],
+  "endings": [
+    { "when": { "resource": "energy", "edge": "min" }, "text": "You ran out of energy. Time to stop." },
+    { "when": { "resource": "calm", "edge": "min" }, "text": "You lost your cool. Time to breathe." },
+    { "fallback": true, "text": "The story has reached its end." }
+  ]
+}

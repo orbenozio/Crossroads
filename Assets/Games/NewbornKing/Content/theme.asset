@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fccb522c64eb14fbbb14981ff77a48, type: 3}
+  m_Name: theme
+  m_EditorClassIdentifier: Crossroads.UI::Crossroads.UI.Theme
+  background: {r: 0.09, g: 0.08, b: 0.16, a: 1}
+  card: {r: 0.22, g: 0.19, b: 0.29, a: 1}
+  text: {r: 0.96, g: 0.94, b: 0.88, a: 1}
+  accent: {r: 0.85, g: 0.68, b: 0.28, a: 1}
+  approaching: {r: 0.95, g: 0.75, b: 0.2, a: 1}
+  willBreak: {r: 0.85, g: 0.25, b: 0.25, a: 1}
+  font: {fileID: 0}
+  rightToLeft: 0
+  resourceLabels:
+  - id: baby
+    label: Heir
+  speakers:
+  - id: varic
+    tint: {r: 0.55, g: 0.7, b: 0.95, a: 1}
+    icon: {fileID: 0}
+  - id: general
+    tint: {r: 0.8, g: 0.55, b: 0.5, a: 1}
+    icon: {fileID: 0}
+  - id: priest
+    tint: {r: 0.92, g: 0.8, b: 0.45, a: 1}
+    icon: {fileID: 0}
+  - id: treasurer
+    tint: {r: 0.55, g: 0.82, b: 0.6, a: 1}
+    icon: {fileID: 0}

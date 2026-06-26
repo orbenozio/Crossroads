@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "startNodeId": "intro_01",
+  "nodes": [
+    {
+      "id": "intro_01",
+      "speaker": "narrator",
+      "body": "יום חדש מתחיל. באיזה קצב תבחר להתחיל אותו?",
+      "choices": [
+        {
+          "side": "left",
+          "label": "לנוח",
+          "effects": [
+            { "resource": "energy", "delta": 2 },
+            { "resource": "calm", "delta": 1 }
+          ]
+        },
+        {
+          "side": "right",
+          "label": "להתחיל לעבוד",
+          "effects": [
+            { "resource": "energy", "delta": -2 },
+            { "resource": "calm", "delta": -1 }
+          ],
+          "setFlags": { "started_work": true }
+        }
+      ]
+    },
+    {
+      "id": "work_push",
+      "speaker": "narrator",
+      "body": "אתה ממש בתוך זה עכשיו. אפשר לדחוף עוד קצת.",
+      "appearWhen": {
+        "allOf": [
+          { "flag": "started_work", "is": true },
+          { "resource": "energy", "op": ">=", "value": 1 }
+        ]
+      },
+      "choices": [
+        {
+          "side": "left",
+          "label": "לקחת הפסקה",
+          "effects": [ { "resource": "energy", "delta": 1 } ]
+        },
+        {
+          "side": "right",
+          "label": "לדחוף חזק",
+          "effects": [
+            { "resource": "energy", "delta": -3 },
+            { "resource": "calm", "delta": -2 }
+          ],
+          "next": "burnout_check"
+        }
+      ]
+    },
+    {
+      "id": "burnout_check",
+      "speaker": "narrator",
+      "body": "הראש מתחיל להתעייף. כדאי להאט?",
+      "choices": [
+        {
+          "side": "left",
+          "label": "להאט",
+          "effects": [ { "resource": "calm", "delta": 2 } ]
+        },
+        {
+          "side": "right",
+          "label": "להמשיך בכל הכוח",
+          "effects": [ { "resource": "calm", "delta": -2 } ]
+        }
+      ]
+    }
+  ],
+  "endings": [
+    { "when": { "resource": "energy", "edge": "min" }, "text": "נגמרה לך האנרגיה. זה הזמן לעצור." },
+    { "when": { "resource": "calm", "edge": "min" }, "text": "איבדת את הקור-רוח. זה הזמן לנשום." },
+    { "fallback": true, "text": "היום הגיע לסופו, ואתה עדיין על הרגליים." }
+  ]
+}
