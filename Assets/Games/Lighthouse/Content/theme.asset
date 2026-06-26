@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5fccb522c64eb14fbbb14981ff77a48, type: 3}
   m_Name: theme
   m_EditorClassIdentifier: Crossroads.UI::Crossroads.UI.Theme
-  background: {r: 0.12, g: 0.12, b: 0.14, a: 1}
-  card: {r: 0.2, g: 0.2, b: 0.24, a: 1}
-  text: {r: 1, g: 1, b: 1, a: 1}
+  background: {r: 0.06, g: 0.12, b: 0.16, a: 1}
+  card: {r: 0.14, g: 0.22, b: 0.28, a: 1}
+  text: {r: 0.93, g: 0.96, b: 0.96, a: 1}
+  accent: {r: 0.95, g: 0.72, b: 0.3, a: 1}
   approaching: {r: 0.95, g: 0.75, b: 0.2, a: 1}
   willBreak: {r: 0.85, g: 0.25, b: 0.25, a: 1}
   font: {fileID: 0}
+  rightToLeft: 0
   resourceLabels:
   - id: spirits
     label: Resolve
