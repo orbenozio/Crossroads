@@ -32,6 +32,7 @@ namespace Crossroads.UI
         private RectTransform _panel;
         private Image _art;       // optional key-art backdrop (Theme.keyArt)
         private GameObject _scrim;
+        private Image _logo;      // optional title wordmark (Theme.logo), replaces the title text
         private TMP_Text _title;
         private TMP_Text _body;
         private RectTransform _buttons;
@@ -41,9 +42,18 @@ namespace Crossroads.UI
 
         public bool IsShown => _panel != null && _panel.gameObject.activeSelf;
 
-        public void Show(string title, string body, IReadOnlyList<MenuItem> items)
+        // useLogo: show the theme's title wordmark in place of the title text (main menu only;
+        // the pause/confirm screens keep their text title).
+        public void Show(string title, string body, IReadOnlyList<MenuItem> items, bool useLogo = false)
         {
             Ensure();
+            bool showLogo = useLogo && _logo != null && _theme != null && _theme.logo != null;
+            if (_logo != null)
+            {
+                _logo.gameObject.SetActive(showLogo);
+                if (showLogo) _logo.sprite = _theme.logo;
+            }
+            _title.gameObject.SetActive(!showLogo);
             _title.text = title ?? string.Empty;
             _body.text = body ?? string.Empty;
             _body.gameObject.SetActive(!string.IsNullOrEmpty(body));
@@ -140,6 +150,7 @@ namespace Crossroads.UI
                 _panel = found;
                 _art = found.Find("Art").GetComponent<Image>();
                 _scrim = found.Find("Scrim").gameObject;
+                _logo = found.Find("Logo").GetComponent<Image>();
                 _title = found.Find("Title").GetComponent<TMP_Text>();
                 _body = found.Find("Body").GetComponent<TMP_Text>();
                 _buttons = found.Find("Buttons") as RectTransform;
@@ -170,6 +181,16 @@ namespace Crossroads.UI
 
             _title = MakeText("Title", new Vector2(0.08f, 0.70f), new Vector2(0.92f, 0.88f), 60, FontStyles.Bold);
             _body = MakeText("Body", new Vector2(0.12f, 0.54f), new Vector2(0.88f, 0.68f), 28, FontStyles.Normal);
+
+            // Optional title wordmark (Theme.logo), over the title region; shown instead of the title text.
+            var logoGo = new GameObject("Logo", typeof(RectTransform), typeof(Image));
+            logoGo.transform.SetParent(_panel, false);
+            var logoRt = (RectTransform)logoGo.transform;
+            logoRt.anchorMin = new Vector2(0.1f, 0.66f); logoRt.anchorMax = new Vector2(0.9f, 0.93f);
+            logoRt.offsetMin = Vector2.zero; logoRt.offsetMax = Vector2.zero;
+            _logo = logoGo.GetComponent<Image>();
+            _logo.preserveAspect = true; _logo.raycastTarget = false; _logo.color = Color.white;
+            logoGo.SetActive(false);
 
             var btnsGo = new GameObject("Buttons", typeof(RectTransform));
             _buttons = (RectTransform)btnsGo.transform;

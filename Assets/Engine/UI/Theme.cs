@@ -18,6 +18,7 @@ namespace Crossroads.UI
 
         [Header("Art")]
         public Sprite keyArt;      // optional key-art backdrop for the menu screens; null = flat panel
+        public Sprite logo;        // optional title wordmark shown in place of the menu title text
 
         [Header("Typography")]
         public Font font;

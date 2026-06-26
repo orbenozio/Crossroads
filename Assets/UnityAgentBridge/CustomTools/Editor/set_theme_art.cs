@@ -6,15 +6,16 @@ using Crossroads.UI;
 
 namespace UnityAgentBridge.Editor.CustomTools
 {
-    // Imports an image as a Sprite and assigns it to a Theme's keyArt (the menu-screen backdrop).
-    // Keeps art data-driven: the theme owns its key art, so cloning a game swaps art via its theme (J8).
+    // Imports an image as a Sprite and assigns it to a Theme's keyArt (menu backdrop) or logo (title
+    // wordmark). Keeps art data-driven: the theme owns it, so cloning swaps art via its theme (J8).
     public static class set_theme_art
     {
-        [McpTool("set_theme_art", "Import an image as a Sprite and assign it to Theme.keyArt (menu backdrop)")]
-        public static object Invoke(string themePath = "", string spritePath = "")
+        [McpTool("set_theme_art", "Import an image as a Sprite and assign it to Theme.keyArt or .logo (field=keyArt|logo)")]
+        public static object Invoke(string themePath = "", string spritePath = "", string field = "keyArt")
         {
             if (string.IsNullOrEmpty(themePath)) throw new Exception("themePath is required");
             if (string.IsNullOrEmpty(spritePath)) throw new Exception("spritePath is required");
+            bool isLogo = string.Equals(field, "logo", StringComparison.OrdinalIgnoreCase);
 
             var theme = AssetDatabase.LoadAssetAtPath<Theme>(themePath);
             if (theme == null) throw new Exception("Theme not found at " + themePath);
@@ -36,11 +37,11 @@ namespace UnityAgentBridge.Editor.CustomTools
                     if (o is Sprite sp) { sprite = sp; break; }
             if (sprite == null) throw new Exception("could not load a Sprite from " + spritePath);
 
-            theme.keyArt = sprite;
+            if (isLogo) theme.logo = sprite; else theme.keyArt = sprite;
             EditorUtility.SetDirty(theme);
             AssetDatabase.SaveAssets();
 
-            return new { ok = true, themePath, spritePath, sprite = sprite.name };
+            return new { ok = true, themePath, spritePath, field = isLogo ? "logo" : "keyArt", sprite = sprite.name };
         }
     }
 }

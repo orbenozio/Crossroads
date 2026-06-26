@@ -85,7 +85,7 @@ namespace Crossroads.Game.Lighthouse
             if (hasSave) items.Add(new MenuOverlay.MenuItem("Continue", ContinueRun, true));
             items.Add(new MenuOverlay.MenuItem("New Game", hasSave ? (Action)ConfirmNewGame : StartRun, !hasSave));
             items.Add(new MenuOverlay.MenuItem("Quit", QuitApp));
-            menu.Show(title, intro, items);
+            menu.Show(title, intro, items, true);   // useLogo: title wordmark if the theme has one
         }
 
         private void ConfirmNewGame()

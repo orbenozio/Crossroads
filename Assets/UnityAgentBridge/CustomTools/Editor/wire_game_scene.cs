@@ -117,7 +117,7 @@ namespace UnityAgentBridge.Editor.CustomTools
                     new MenuOverlay.MenuItem("Continue", null, true),
                     new MenuOverlay.MenuItem("New Game", null),
                     new MenuOverlay.MenuItem("Quit", null)
-                });
+                }, true);   // useLogo: preview the title wordmark when the theme has one
             }
             else if (showOpening) overlay.Show(t, introText, "Start", null);
             else { overlay.Hide(); menu.Hide(); }
