@@ -15,7 +15,7 @@ namespace Crossroads.UI
         private RectTransform _container;
         private readonly Dictionary<string, Bar> _bars = new Dictionary<string, Bar>();
 
-        private sealed class Bar { public RectTransform root; public RectTransform fill; public Image fillImg; public TextMeshProUGUI label; public string baseLabel; }
+        private sealed class Bar { public RectTransform root; public RectTransform fill; public Image fillImg; public Image icon; public TextMeshProUGUI label; public string baseLabel; }
 
         public void SetTheme(Theme t) => _theme = t;
 
@@ -36,8 +36,16 @@ namespace Crossroads.UI
                 bar.fill.offsetMax = Vector2.zero;
                 bar.fillImg.color = FillColor(v.Danger);
 
+                // With a HUD icon the bar shows icon + value; without one it keeps the text name + value.
+                bool hasIcon = v.Icon != null;
+                if (bar.icon != null)
+                {
+                    bar.icon.gameObject.SetActive(hasIcon);
+                    if (hasIcon) { bar.icon.sprite = v.Icon; bar.icon.color = Color.white; }
+                }
+
                 string mark = v.Danger == DangerLevel.WillBreak ? "  !!" : v.Danger == DangerLevel.Approaching ? "  !" : "";
-                bar.baseLabel = v.DisplayName + " " + v.Value + mark;
+                bar.baseLabel = (hasIcon ? v.Value.ToString() : v.DisplayName + " " + v.Value) + mark;
                 bar.label.text = bar.baseLabel;
             }
         }
@@ -145,6 +153,16 @@ namespace Crossroads.UI
             fill.SetParent(root, false);
             var fillImg = fillGo.GetComponent<Image>();
 
+            var iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+            var iconRt = (RectTransform)iconGo.transform;
+            iconRt.SetParent(root, false);
+            iconRt.anchorMin = new Vector2(0.04f, 0.1f);
+            iconRt.anchorMax = new Vector2(0.28f, 0.9f);
+            iconRt.offsetMin = Vector2.zero; iconRt.offsetMax = Vector2.zero;
+            var iconImg = iconGo.GetComponent<Image>();
+            iconImg.preserveAspect = true; iconImg.raycastTarget = false; iconImg.color = Color.white;
+            iconGo.SetActive(false);
+
             var labelGo = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
             var labelRt = (RectTransform)labelGo.transform;
             labelRt.SetParent(root, false);
@@ -158,7 +176,7 @@ namespace Crossroads.UI
             label.enableWordWrapping = false;
             label.raycastTarget = false;
 
-            var bar = new Bar { root = root, fill = fill, fillImg = fillImg, label = label };
+            var bar = new Bar { root = root, fill = fill, fillImg = fillImg, icon = iconImg, label = label };
             _bars[id] = bar;
             return bar;
         }
@@ -168,7 +186,9 @@ namespace Crossroads.UI
             var rt = (RectTransform)root;
             var fill = (RectTransform)root.Find("Fill");
             var label = root.Find("Label").GetComponent<TextMeshProUGUI>();
-            return new Bar { root = rt, fill = fill, fillImg = fill.GetComponent<Image>(), label = label };
+            var iconT = root.Find("Icon");
+            return new Bar { root = rt, fill = fill, fillImg = fill.GetComponent<Image>(),
+                icon = iconT != null ? iconT.GetComponent<Image>() : null, label = label };
         }
 
         private void Place(RectTransform root, int index, int count)

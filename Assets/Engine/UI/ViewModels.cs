@@ -1,4 +1,5 @@
 using Crossroads.Engine;
+using UnityEngine;
 
 namespace Crossroads.UI
 {
@@ -25,9 +26,12 @@ namespace Crossroads.UI
         public readonly int Min;
         public readonly int Max;
         public readonly DangerLevel Danger;
+        public readonly Sprite Icon;   // optional HUD icon (Theme), null = text only
         public ResourceView(string id, string displayName, int value, int min, int max, DangerLevel danger)
+            : this(id, displayName, value, min, max, danger, null) { }
+        public ResourceView(string id, string displayName, int value, int min, int max, DangerLevel danger, Sprite icon)
         {
-            Id = id; DisplayName = displayName; Value = value; Min = min; Max = max; Danger = danger;
+            Id = id; DisplayName = displayName; Value = value; Min = min; Max = max; Danger = danger; Icon = icon;
         }
     }
 }

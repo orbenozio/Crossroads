@@ -35,6 +35,14 @@ namespace Crossroads.UI
             return null;
         }
 
+        // Optional per-resource HUD icon (J8 - art lives in the theme). null = no icon (text only).
+        public Sprite GetResourceIcon(string resourceId)
+        {
+            foreach (var r in resourceLabels)
+                if (r.id == resourceId && r.icon != null) return r.icon;
+            return null;
+        }
+
         public SpeakerStyle GetSpeaker(string speakerId)
         {
             foreach (var s in speakers)
@@ -47,6 +55,7 @@ namespace Crossroads.UI
         {
             public string id;
             public string label;
+            public Sprite icon;   // optional HUD icon for this resource
         }
 
         [System.Serializable]

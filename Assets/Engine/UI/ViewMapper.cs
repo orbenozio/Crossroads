@@ -32,7 +32,8 @@ namespace Crossroads.UI
                 string label = theme != null ? theme.GetResourceLabelOverride(def.id) : null;
                 if (string.IsNullOrEmpty(label)) label = def.displayName;
                 var danger = ResourceRules.DangerFor(def, value);
-                views.Add(new ResourceView(def.id, label, value, def.min, def.max, danger));
+                var icon = theme != null ? theme.GetResourceIcon(def.id) : null;
+                views.Add(new ResourceView(def.id, label, value, def.min, def.max, danger, icon));
             }
             return views;
         }

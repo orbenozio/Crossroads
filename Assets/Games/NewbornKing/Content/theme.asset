@@ -24,6 +24,16 @@ MonoBehaviour:
   resourceLabels:
   - id: baby
     label: Heir
+    icon: {fileID: 21300000, guid: 7b65e0a27111d2a4bb71f533a3e27fbe, type: 3}
+  - id: money
+    label: 
+    icon: {fileID: 21300000, guid: 15d751ea7363c6f47904b18590c193d9, type: 3}
+  - id: sanity
+    label: 
+    icon: {fileID: 21300000, guid: 2dc94688836bc624e851d7335a1fe8cf, type: 3}
+  - id: sleep
+    label: 
+    icon: {fileID: 21300000, guid: 24c25aa6ff3311544a5ee02948ba18eb, type: 3}
   speakers:
   - id: varic
     tint: {r: 0.55, g: 0.7, b: 0.95, a: 1}
