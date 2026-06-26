@@ -54,7 +54,12 @@ namespace Crossroads.UI
             if (theme != null)
             {
                 _choiceColor = theme.text;
-                if (cardBackground != null) cardBackground.color = theme.card;
+                if (cardBackground != null)
+                {
+                    // Card art when the theme has it (drawn at true colors), else the flat card color.
+                    cardBackground.sprite = theme.cardArt;
+                    cardBackground.color = theme.cardArt != null ? Color.white : theme.card;
+                }
                 if (bodyText != null) bodyText.color = theme.text;
                 if (named && speakerLabel != null)
                     speakerLabel.color = speaker != null ? speaker.tint : theme.accent;

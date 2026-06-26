@@ -19,6 +19,8 @@ namespace Crossroads.UI
         [Header("Art")]
         public Sprite keyArt;      // optional key-art backdrop for the menu screens; null = flat panel
         public Sprite logo;        // optional title wordmark shown in place of the menu title text
+        public Sprite cardArt;     // optional card background art; null = flat card color
+        public Sprite meterFrame;  // optional decorative frame drawn behind each meter icon
 
         [Header("Audio")]
         public AudioClip music;     // looping gameplay track
