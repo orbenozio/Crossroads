@@ -23,7 +23,8 @@ namespace Crossroads.UI
         [Header("Audio")]
         public AudioClip music;     // looping gameplay track
         public AudioClip musicMenu; // looping track for the title / main menu (falls back to music if unset)
-        public AudioClip swipeSfx;  // played when a choice is committed
+        public AudioClip swipeSfx;  // played when a choice is committed (card slides off)
+        public AudioClip cardSfx;   // played when a new card appears
         public AudioClip clickSfx;  // played on UI button presses
 
         [Header("Typography")]

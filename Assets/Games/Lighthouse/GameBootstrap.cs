@@ -199,6 +199,7 @@ namespace Crossroads.Game.Lighthouse
         {
             if (cardView != null) cardView.Bind(ViewMapper.BuildNodeView(_engine.Current), theme);
             if (resourceBar != null) resourceBar.Bind(ViewMapper.BuildResourceViews(_engine.State, resources, theme));
+            if (audioDirector != null && theme != null) audioDirector.PlaySfx(theme.cardSfx);   // new card appears
         }
 
         // Clears the card/meters behind the main menu so the title screen is not backed by stale content.

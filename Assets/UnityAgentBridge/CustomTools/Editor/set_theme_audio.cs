@@ -10,7 +10,7 @@ namespace UnityAgentBridge.Editor.CustomTools
     // mp3/wav/ogg as AudioClip. Keeps audio data-driven: the theme owns it, so cloning swaps it (J8).
     public static class set_theme_audio
     {
-        [McpTool("set_theme_audio", "Assign an audio clip to a Theme slot (field=music|musicMenu|swipeSfx|clickSfx)")]
+        [McpTool("set_theme_audio", "Assign an audio clip to a Theme slot (field=music|musicMenu|swipeSfx|cardSfx|clickSfx)")]
         public static object Invoke(string themePath = "", string clipPath = "", string field = "music")
         {
             if (string.IsNullOrEmpty(themePath)) throw new Exception("themePath is required");
@@ -27,6 +27,7 @@ namespace UnityAgentBridge.Editor.CustomTools
             {
                 case "musicmenu": theme.musicMenu = clip; break;
                 case "swipesfx":  theme.swipeSfx = clip; break;
+                case "cardsfx":   theme.cardSfx = clip; break;
                 case "clicksfx":  theme.clickSfx = clip; break;
                 default:          theme.music = clip; field = "music"; break;
             }
