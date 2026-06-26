@@ -66,6 +66,7 @@ namespace Crossroads.Game.Lighthouse
                 swipeInput.OnMenu += OpenPause;        // Esc opens the pause menu
             }
             if (pauseButton != null) pauseButton.OnPressed += OpenPause;
+            if (audioDirector != null && theme != null) audioDirector.ConfigureUiClick(theme.clickSfx);
 
             ShowMainMenu();
         }

@@ -67,6 +67,6 @@ namespace Crossroads.UI
             }
         }
 
-        private void Fire() => OnPressed?.Invoke();
+        private void Fire() { AudioDirector.PlayClick(); OnPressed?.Invoke(); }
     }
 }

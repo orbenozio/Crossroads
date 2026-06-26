@@ -11,6 +11,14 @@ namespace Crossroads.UI
         private AudioSource _music;
         private AudioSource _sfx;
 
+        // The active director + its UI click clip, so any generic UI button can play a click without
+        // each component wiring an AudioDirector reference (same static-helper pattern as UIFonts).
+        private static AudioDirector _active;
+        private AudioClip _clickClip;
+
+        public void ConfigureUiClick(AudioClip click) { _active = this; _clickClip = click; }
+        public static void PlayClick() { if (_active != null) _active.PlaySfx(_active._clickClip); }
+
         // Starts (or keeps) a looping music track. No-op if the clip is null or already playing.
         public void PlayMusic(AudioClip clip, float volume = 0.45f)
         {

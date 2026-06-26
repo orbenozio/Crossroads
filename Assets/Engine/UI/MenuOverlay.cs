@@ -134,6 +134,7 @@ namespace Crossroads.UI
         private void Invoke(int index)
         {
             if (index < 0 || index >= _actions.Count) return;
+            AudioDirector.PlayClick();
             Action a = _actions[index];
             // Hide first so an action that reshows the menu (e.g. Cancel -> main menu) wins the final state.
             Hide();

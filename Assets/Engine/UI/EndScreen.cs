@@ -99,12 +99,14 @@ namespace Crossroads.UI
 
         private void OnRestartClicked()
         {
+            AudioDirector.PlayClick();
             Hide();
             _onRestart?.Invoke();
         }
 
         private void OnMenuClicked()
         {
+            AudioDirector.PlayClick();
             Hide();
             _onMenu?.Invoke();
         }

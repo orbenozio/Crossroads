@@ -24,7 +24,7 @@ MonoBehaviour:
   musicMenu: {fileID: 8300000, guid: 441fdabd9067f3242891155c3920aa31, type: 3}
   swipeSfx: {fileID: 8300000, guid: df212c52ec69c454d8e934921ab27f7d, type: 3}
   cardSfx: {fileID: 8300000, guid: 7d4ea43774903e34582b866a1cc9aa13, type: 3}
-  clickSfx: {fileID: 0}
+  clickSfx: {fileID: 8300000, guid: a968acfe733b4c34b8e7f984f159b399, type: 3}
   font: {fileID: 0}
   rightToLeft: 0
   resourceLabels:
