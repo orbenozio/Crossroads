@@ -31,6 +31,7 @@ namespace Crossroads.UI
         private Theme _theme;
         private RectTransform _panel;
         private Image _art;       // optional key-art backdrop (Theme.keyArt)
+        private AspectRatioFitter _artFitter;   // covers the screen (crops the bleed) instead of letterboxing
         private GameObject _scrim;
         private Image _logo;      // optional title wordmark (Theme.logo), replaces the title text
         private TMP_Text _title;
@@ -150,6 +151,7 @@ namespace Crossroads.UI
             {
                 _panel = found;
                 _art = found.Find("Art").GetComponent<Image>();
+                _artFitter = _art.GetComponent<AspectRatioFitter>();
                 _scrim = found.Find("Scrim").gameObject;
                 _logo = found.Find("Logo").GetComponent<Image>();
                 _title = found.Find("Title").GetComponent<TMP_Text>();
@@ -170,8 +172,10 @@ namespace Crossroads.UI
             artGo.transform.SetParent(_panel, false);
             Stretch((RectTransform)artGo.transform);
             _art = artGo.GetComponent<Image>();
-            _art.preserveAspect = true;   // fit by width, dark bands fill the rest (no distortion)
             _art.raycastTarget = false;
+            // Cover the screen (crop the bleed) rather than letterbox; aspectRatio set per sprite in ApplyArt.
+            _artFitter = artGo.AddComponent<AspectRatioFitter>();
+            _artFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
 
             var scrimGo = new GameObject("Scrim", typeof(RectTransform), typeof(Image));
             scrimGo.transform.SetParent(_panel, false);
@@ -227,6 +231,7 @@ namespace Crossroads.UI
             Sprite s = _theme != null ? _theme.keyArt : null;
             bool has = s != null;
             _art.sprite = s;
+            if (has && _artFitter != null) _artFitter.aspectRatio = s.rect.width / s.rect.height;
             _art.gameObject.SetActive(has);
             if (_scrim != null) _scrim.SetActive(has);
         }

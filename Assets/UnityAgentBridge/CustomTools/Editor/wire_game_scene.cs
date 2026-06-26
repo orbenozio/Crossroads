@@ -49,10 +49,10 @@ namespace UnityAgentBridge.Editor.CustomTools
             var body = EnsureTmpBody(card);
             // Bands: portrait + speaker name at the top, choice hints at the bottom, body in the middle.
             var bodyRt = (RectTransform)body.transform;
-            bodyRt.anchorMin = new Vector2(0.08f, 0.16f); bodyRt.anchorMax = new Vector2(0.92f, 0.69f);
+            bodyRt.anchorMin = new Vector2(0.08f, 0.16f); bodyRt.anchorMax = new Vector2(0.92f, 0.67f);
             bodyRt.offsetMin = Vector2.zero; bodyRt.offsetMax = Vector2.zero;
-            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.37f, 0.78f), new Vector2(0.63f, 0.965f));
-            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.71f), new Vector2(0.92f, 0.775f), 26, TextAlignmentOptions.Center);
+            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.33f, 0.745f), new Vector2(0.67f, 0.975f));
+            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.685f), new Vector2(0.92f, 0.74f), 26, TextAlignmentOptions.Center);
             var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.06f, 0.03f), new Vector2(0.48f, 0.14f), 22, TextAlignmentOptions.Left);
             var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.52f, 0.03f), new Vector2(0.94f, 0.14f), 22, TextAlignmentOptions.Right);
 

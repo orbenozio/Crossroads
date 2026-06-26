@@ -43,6 +43,11 @@ namespace Crossroads.UI
                     bar.icon.gameObject.SetActive(hasIcon);
                     if (hasIcon) { bar.icon.sprite = v.Icon; bar.icon.color = Color.white; }
                 }
+                // With an icon on the left, the value sits in the right portion so they do not overlap.
+                var lrt = bar.label.rectTransform;
+                lrt.anchorMin = new Vector2(hasIcon ? 0.42f : 0f, 0f);
+                lrt.anchorMax = Vector2.one;
+                lrt.offsetMin = Vector2.zero; lrt.offsetMax = Vector2.zero;
 
                 string mark = v.Danger == DangerLevel.WillBreak ? "  !!" : v.Danger == DangerLevel.Approaching ? "  !" : "";
                 bar.baseLabel = (hasIcon ? v.Value.ToString() : v.DisplayName + " " + v.Value) + mark;
@@ -100,9 +105,10 @@ namespace Crossroads.UI
             _container.anchorMin = new Vector2(0f, 1f);
             _container.anchorMax = new Vector2(1f, 1f);
             _container.pivot = new Vector2(0.5f, 1f);
-            _container.anchoredPosition = new Vector2(0f, -30f);
-            // Inset 120 total leaves the top corners clear for the pause button (54px).
-            _container.sizeDelta = new Vector2(-120f, 56f);
+            _container.anchoredPosition = new Vector2(0f, -34f);
+            // Inset 120 total leaves the top corners clear for the pause button (54px). Taller so the
+            // icons read clearly (icon size is bounded by the bar height via preserveAspect).
+            _container.sizeDelta = new Vector2(-120f, 72f);
         }
 
         // A full-width top strip behind the meters, forming a HUD bar (and a backdrop for the corner
@@ -117,7 +123,7 @@ namespace Crossroads.UI
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot = new Vector2(0.5f, 1f);
             rt.anchoredPosition = Vector2.zero;
-            rt.sizeDelta = new Vector2(0f, 94f);
+            rt.sizeDelta = new Vector2(0f, 112f);
             Color c = _theme != null ? _theme.background : new Color(0.10f, 0.10f, 0.12f);
             go.GetComponent<Image>().color = new Color(c.r * 0.7f, c.g * 0.7f, c.b * 0.7f, 0.85f);
             go.GetComponent<Image>().raycastTarget = false;
@@ -156,8 +162,8 @@ namespace Crossroads.UI
             var iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
             var iconRt = (RectTransform)iconGo.transform;
             iconRt.SetParent(root, false);
-            iconRt.anchorMin = new Vector2(0.04f, 0.1f);
-            iconRt.anchorMax = new Vector2(0.28f, 0.9f);
+            iconRt.anchorMin = new Vector2(0.05f, 0.06f);
+            iconRt.anchorMax = new Vector2(0.42f, 0.94f);
             iconRt.offsetMin = Vector2.zero; iconRt.offsetMax = Vector2.zero;
             var iconImg = iconGo.GetComponent<Image>();
             iconImg.preserveAspect = true; iconImg.raycastTarget = false; iconImg.color = Color.white;
@@ -170,7 +176,7 @@ namespace Crossroads.UI
             labelRt.offsetMin = Vector2.zero; labelRt.offsetMax = Vector2.zero;
             var label = labelGo.GetComponent<TextMeshProUGUI>();
             UIFonts.Apply(label);
-            label.fontSize = 20;
+            label.fontSize = 26;
             label.alignment = TextAlignmentOptions.Center;
             label.color = Color.white;
             label.enableWordWrapping = false;
