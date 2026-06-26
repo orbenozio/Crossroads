@@ -30,12 +30,14 @@ namespace Crossroads.UI
 
         private Theme _theme;
         private RectTransform _panel;
+        private Image _art;       // optional key-art backdrop (Theme.keyArt)
+        private GameObject _scrim;
         private TMP_Text _title;
         private TMP_Text _body;
         private RectTransform _buttons;
         private readonly List<Action> _actions = new List<Action>();   // index -> action, for number-key picking
 
-        public void SetTheme(Theme t) => _theme = t;
+        public void SetTheme(Theme t) { _theme = t; ApplyArt(); }
 
         public bool IsShown => _panel != null && _panel.gameObject.activeSelf;
 
@@ -136,9 +138,12 @@ namespace Crossroads.UI
             if (found != null)
             {
                 _panel = found;
+                _art = found.Find("Art").GetComponent<Image>();
+                _scrim = found.Find("Scrim").gameObject;
                 _title = found.Find("Title").GetComponent<TMP_Text>();
                 _body = found.Find("Body").GetComponent<TMP_Text>();
                 _buttons = found.Find("Buttons") as RectTransform;
+                ApplyArt();
                 return;
             }
 
@@ -147,6 +152,21 @@ namespace Crossroads.UI
             _panel.SetParent(transform, false);
             Stretch(_panel);
             panelGo.GetComponent<Image>().color = PanelColor();
+
+            // Backdrop key art (behind everything), then a dark scrim for text readability.
+            var artGo = new GameObject("Art", typeof(RectTransform), typeof(Image));
+            artGo.transform.SetParent(_panel, false);
+            Stretch((RectTransform)artGo.transform);
+            _art = artGo.GetComponent<Image>();
+            _art.preserveAspect = true;   // fit by width, dark bands fill the rest (no distortion)
+            _art.raycastTarget = false;
+
+            var scrimGo = new GameObject("Scrim", typeof(RectTransform), typeof(Image));
+            scrimGo.transform.SetParent(_panel, false);
+            Stretch((RectTransform)scrimGo.transform);
+            scrimGo.GetComponent<Image>().color = new Color(0.04f, 0.04f, 0.07f, 0.42f);
+            scrimGo.GetComponent<Image>().raycastTarget = false;
+            _scrim = scrimGo;
 
             _title = MakeText("Title", new Vector2(0.08f, 0.70f), new Vector2(0.92f, 0.88f), 60, FontStyles.Bold);
             _body = MakeText("Body", new Vector2(0.12f, 0.54f), new Vector2(0.88f, 0.68f), 28, FontStyles.Normal);
@@ -158,6 +178,7 @@ namespace Crossroads.UI
             _buttons.anchorMax = new Vector2(0.9f, 0.5f);
             _buttons.offsetMin = Vector2.zero; _buttons.offsetMax = Vector2.zero;
 
+            ApplyArt();   // assign/hide the backdrop now that Art + Scrim exist
             _panel.gameObject.SetActive(false);
         }
 
@@ -175,6 +196,17 @@ namespace Crossroads.UI
             t.color = _theme != null ? _theme.text : Color.white;
             t.raycastTarget = false;
             return t;
+        }
+
+        // Shows the theme's key art behind a scrim, or hides both (flat panel) when there is none.
+        private void ApplyArt()
+        {
+            if (_art == null) return;   // overlay not built yet
+            Sprite s = _theme != null ? _theme.keyArt : null;
+            bool has = s != null;
+            _art.sprite = s;
+            _art.gameObject.SetActive(has);
+            if (_scrim != null) _scrim.SetActive(has);
         }
 
         private Color PanelColor()

@@ -16,6 +16,9 @@ namespace Crossroads.UI
         public Color approaching = new Color(0.95f, 0.75f, 0.20f);  // color is a secondary channel; danger is also marked !/!!
         public Color willBreak = new Color(0.85f, 0.25f, 0.25f);
 
+        [Header("Art")]
+        public Sprite keyArt;      // optional key-art backdrop for the menu screens; null = flat panel
+
         [Header("Typography")]
         public Font font;
         public bool rightToLeft;   // עברית/RTL: ה-bootstrap מעביר ל-UIFonts.RightToLeft לפני בניית ה-UI (§10.6)
