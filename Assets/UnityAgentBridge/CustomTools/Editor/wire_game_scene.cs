@@ -47,19 +47,21 @@ namespace UnityAgentBridge.Editor.CustomTools
             var legacy = card.transform.Find("Label");
             if (legacy != null) UnityEngine.Object.DestroyImmediate(legacy.gameObject);
             var body = EnsureTmpBody(card);
-            // Reserve the top (speaker) and bottom (choice hints) bands - body sits in the middle.
+            // Bands: portrait + speaker name at the top, choice hints at the bottom, body in the middle.
             var bodyRt = (RectTransform)body.transform;
-            bodyRt.anchorMin = new Vector2(0.08f, 0.18f); bodyRt.anchorMax = new Vector2(0.92f, 0.82f);
+            bodyRt.anchorMin = new Vector2(0.08f, 0.16f); bodyRt.anchorMax = new Vector2(0.92f, 0.69f);
             bodyRt.offsetMin = Vector2.zero; bodyRt.offsetMax = Vector2.zero;
-            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.86f), new Vector2(0.92f, 0.97f), 26, TextAlignmentOptions.Center);
+            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.37f, 0.78f), new Vector2(0.63f, 0.965f));
+            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.71f), new Vector2(0.92f, 0.775f), 26, TextAlignmentOptions.Center);
             var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.06f, 0.03f), new Vector2(0.48f, 0.14f), 22, TextAlignmentOptions.Left);
             var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.52f, 0.03f), new Vector2(0.94f, 0.14f), 22, TextAlignmentOptions.Right);
 
-            // CardView on Card, wired to the TMP body + speaker/choice labels + the card Image.
+            // CardView on Card, wired to the TMP body + portrait + speaker/choice labels + the card Image.
             var cardView = card.GetComponent<CardView>() ?? card.AddComponent<CardView>();
             var cvSo = new SerializedObject(cardView);
             cvSo.FindProperty("bodyText").objectReferenceValue = body;
             cvSo.FindProperty("speakerLabel").objectReferenceValue = speaker;
+            cvSo.FindProperty("speakerIcon").objectReferenceValue = speakerIcon;
             cvSo.FindProperty("leftLabel").objectReferenceValue = choiceLeft;
             cvSo.FindProperty("rightLabel").objectReferenceValue = choiceRight;
             cvSo.FindProperty("cardBackground").objectReferenceValue = card.GetComponent<Image>();
@@ -167,6 +169,24 @@ namespace UnityAgentBridge.Editor.CustomTools
             }
             img.color = theme != null ? theme.background : new Color(0.12f, 0.12f, 0.14f);
             img.transform.SetAsFirstSibling();   // behind the card and HUD
+        }
+
+        // Creates an Image on the card (speaker portrait), preserving aspect; starts hidden until bound.
+        internal static Image MakeCardImage(GameObject card, string name, Vector2 aMin, Vector2 aMax)
+        {
+            var found = card.transform.Find(name);
+            if (found != null) UnityEngine.Object.DestroyImmediate(found.gameObject);
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(card.transform, false);
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = aMin; rt.anchorMax = aMax;
+            rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            var img = go.GetComponent<Image>();
+            img.preserveAspect = true;
+            img.raycastTarget = false;
+            img.color = Color.white;
+            go.SetActive(false);
+            return img;
         }
 
         // Creates a TMP label on the card (speaker badge / choice hint), RTL per UIFonts.

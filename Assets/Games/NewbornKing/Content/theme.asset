@@ -27,13 +27,28 @@ MonoBehaviour:
   speakers:
   - id: varic
     tint: {r: 0.55, g: 0.7, b: 0.95, a: 1}
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: b5b9c0a7be5bb6c4bb470ce3a8502283, type: 3}
   - id: general
     tint: {r: 0.8, g: 0.55, b: 0.5, a: 1}
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 01e2afa3957368f46b0312cc7ae515b9, type: 3}
   - id: priest
     tint: {r: 0.92, g: 0.8, b: 0.45, a: 1}
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: fa79d26ee815e514eaef567c51993a36, type: 3}
   - id: treasurer
     tint: {r: 0.55, g: 0.82, b: 0.6, a: 1}
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 32e474b450821c94798d538f5ba95a62, type: 3}
+  - id: council
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    icon: {fileID: 21300000, guid: a0ef5f67328aff74999d013ba6ba70fe, type: 3}
+  - id: envoy
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    icon: {fileID: 21300000, guid: 97e6f494d61445f4ab65be06c2c6a119, type: 3}
+  - id: guard
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    icon: {fileID: 21300000, guid: f5da756db357e9141a7a5eee5b678ad0, type: 3}
+  - id: nurse
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    icon: {fileID: 21300000, guid: 8d712717d9a452541b29c903e8598063, type: 3}
+  - id: physician
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    icon: {fileID: 21300000, guid: 41fab1d3fb1890b40ae6578b5fee188b, type: 3}

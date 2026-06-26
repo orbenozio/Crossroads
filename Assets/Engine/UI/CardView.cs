@@ -33,11 +33,22 @@ namespace Crossroads.UI
             if (rightLabel != null) rightLabel.text = view.RightLabel;
 
             // Speaker badge: shown for a named speaker, hidden for the narrator / empty (cleaner card).
+            bool named = !string.IsNullOrEmpty(view.Speaker) && view.Speaker != "narrator";
+            var speaker = theme != null ? theme.GetSpeaker(view.Speaker) : null;
+
             if (speakerLabel != null)
             {
-                bool named = !string.IsNullOrEmpty(view.Speaker) && view.Speaker != "narrator";
                 speakerLabel.gameObject.SetActive(named);
                 if (named) speakerLabel.text = Capitalize(view.Speaker);
+            }
+
+            // Speaker portrait (Theme.SpeakerStyle.icon): shown when this speaker has one. Drawn at its
+            // true colors (no tint) - the tint only colors the name label.
+            if (speakerIcon != null)
+            {
+                bool hasIcon = named && speaker != null && speaker.icon != null;
+                speakerIcon.gameObject.SetActive(hasIcon);
+                if (hasIcon) { speakerIcon.sprite = speaker.icon; speakerIcon.color = Color.white; }
             }
 
             if (theme != null)
@@ -45,14 +56,8 @@ namespace Crossroads.UI
                 _choiceColor = theme.text;
                 if (cardBackground != null) cardBackground.color = theme.card;
                 if (bodyText != null) bodyText.color = theme.text;
-                var speaker = theme.GetSpeaker(view.Speaker);
-                if (speakerLabel != null && speakerLabel.gameObject.activeSelf)
+                if (named && speakerLabel != null)
                     speakerLabel.color = speaker != null ? speaker.tint : theme.accent;
-                if (speakerIcon != null && speaker != null)
-                {
-                    speakerIcon.sprite = speaker.icon;
-                    speakerIcon.color = speaker.tint;
-                }
             }
 
             ResetDrag(); // new card - centered final state (also valid in edit/tests)
