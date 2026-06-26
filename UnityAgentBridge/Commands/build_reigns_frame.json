@@ -1,0 +1,46 @@
+{
+  "name": "build_reigns_frame",
+  "description": "Build a Reigns-style frame: overlay Canvas (create_canvas), dark card with title text, and four resource meters (sleep/sanity/money/baby). Param: title. Uses v0.2.0 tools (create_canvas + set_color).",
+  "params": [
+    {
+      "name": "title",
+      "default": "Card prompt goes here. Swipe left or right to decide."
+    }
+  ],
+  "steps": [
+    { "tool": "create_canvas", "args": { "name": "Canvas" } },
+
+    { "tool": "create_gameobject", "args": { "name": "Card" } },
+    { "tool": "set_parent", "args": { "target": "Card", "parent": "Canvas" } },
+    { "tool": "add_component", "args": { "target": "Card", "componentType": "Image" } },
+    { "tool": "set_rect", "args": { "target": "Card", "x": 0, "y": 0, "width": 760, "height": 1120 } },
+    { "tool": "set_color", "args": { "target": "Card", "hex": "#2B2B36" } },
+    { "tool": "set_text", "args": { "target": "Card", "text": "${title}" } },
+    { "tool": "set_color", "args": { "target": "Label", "hex": "#F2F2F5" } },
+    { "tool": "set_property", "args": { "target": "Label", "componentType": "Text", "property": "m_FontData.m_FontSize", "value": 34 } },
+
+    { "tool": "create_gameobject", "args": { "name": "Bar_Sleep" } },
+    { "tool": "set_parent", "args": { "target": "Bar_Sleep", "parent": "Canvas" } },
+    { "tool": "add_component", "args": { "target": "Bar_Sleep", "componentType": "Image" } },
+    { "tool": "set_rect", "args": { "target": "Bar_Sleep", "x": -360, "y": 840, "width": 220, "height": 46 } },
+    { "tool": "set_color", "args": { "target": "Bar_Sleep", "hex": "#4D8CF2" } },
+
+    { "tool": "create_gameobject", "args": { "name": "Bar_Sanity" } },
+    { "tool": "set_parent", "args": { "target": "Bar_Sanity", "parent": "Canvas" } },
+    { "tool": "add_component", "args": { "target": "Bar_Sanity", "componentType": "Image" } },
+    { "tool": "set_rect", "args": { "target": "Bar_Sanity", "x": -120, "y": 840, "width": 220, "height": 46 } },
+    { "tool": "set_color", "args": { "target": "Bar_Sanity", "hex": "#52CC73" } },
+
+    { "tool": "create_gameobject", "args": { "name": "Bar_Money" } },
+    { "tool": "set_parent", "args": { "target": "Bar_Money", "parent": "Canvas" } },
+    { "tool": "add_component", "args": { "target": "Bar_Money", "componentType": "Image" } },
+    { "tool": "set_rect", "args": { "target": "Bar_Money", "x": 120, "y": 840, "width": 220, "height": 46 } },
+    { "tool": "set_color", "args": { "target": "Bar_Money", "hex": "#F2CC40" } },
+
+    { "tool": "create_gameobject", "args": { "name": "Bar_Baby" } },
+    { "tool": "set_parent", "args": { "target": "Bar_Baby", "parent": "Canvas" } },
+    { "tool": "add_component", "args": { "target": "Bar_Baby", "componentType": "Image" } },
+    { "tool": "set_rect", "args": { "target": "Bar_Baby", "x": 360, "y": 840, "width": 220, "height": 46 } },
+    { "tool": "set_color", "args": { "target": "Bar_Baby", "hex": "#F280B8" } }
+  ]
+}
