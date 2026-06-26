@@ -20,6 +20,12 @@ namespace Crossroads.UI
         public Sprite keyArt;      // optional key-art backdrop for the menu screens; null = flat panel
         public Sprite logo;        // optional title wordmark shown in place of the menu title text
 
+        [Header("Audio")]
+        public AudioClip music;     // looping gameplay track
+        public AudioClip musicMenu; // looping track for the title / main menu (falls back to music if unset)
+        public AudioClip swipeSfx;  // played when a choice is committed
+        public AudioClip clickSfx;  // played on UI button presses
+
         [Header("Typography")]
         public Font font;
         public bool rightToLeft;   // עברית/RTL: ה-bootstrap מעביר ל-UIFonts.RightToLeft לפני בניית ה-UI (§10.6)

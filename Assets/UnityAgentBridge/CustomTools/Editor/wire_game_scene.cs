@@ -73,6 +73,7 @@ namespace UnityAgentBridge.Editor.CustomTools
             var overlay = canvas.GetComponent<MessageOverlay>() ?? canvas.AddComponent<MessageOverlay>();
             var menu = canvas.GetComponent<MenuOverlay>() ?? canvas.AddComponent<MenuOverlay>();
             var pause = canvas.GetComponent<PauseButton>() ?? canvas.AddComponent<PauseButton>();
+            var audioDir = canvas.GetComponent<AudioDirector>() ?? canvas.AddComponent<AudioDirector>();
 
             // Game object + the concrete bootstrap (by type), fully wired.
             var gameGo = GameObject.Find("Game") ?? new GameObject("Game");
@@ -91,6 +92,8 @@ namespace UnityAgentBridge.Editor.CustomTools
             if (menuProp != null) menuProp.objectReferenceValue = menu;
             var pauseProp = bSo.FindProperty("pauseButton");
             if (pauseProp != null) pauseProp.objectReferenceValue = pause;
+            var audioProp = bSo.FindProperty("audioDirector");
+            if (audioProp != null) audioProp.objectReferenceValue = audioDir;
             if (!string.IsNullOrEmpty(title)) bSo.FindProperty("title").stringValue = title;
             if (!string.IsNullOrEmpty(intro)) bSo.FindProperty("intro").stringValue = intro;
             bSo.ApplyModifiedProperties();

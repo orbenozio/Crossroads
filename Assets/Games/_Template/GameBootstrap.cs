@@ -25,6 +25,7 @@ namespace Crossroads.Game.Template
         [SerializeField] private MessageOverlay messageOverlay;   // data-error screen (spec 9.5)
         [SerializeField] private MenuOverlay menu;                // main menu + pause + confirm (spec 9.5)
         [SerializeField] private PauseButton pauseButton;         // pointer affordance to open the pause menu
+        [SerializeField] private AudioDirector audioDirector;     // looping music + swipe SFX (clips from the theme)
 
         [Header("Title / menu text")]
         [SerializeField] private string title = "Crossroads";
@@ -85,6 +86,8 @@ namespace Crossroads.Game.Template
             if (hasSave) items.Add(new MenuOverlay.MenuItem("Continue", ContinueRun, true));
             items.Add(new MenuOverlay.MenuItem("New Game", hasSave ? (Action)ConfirmNewGame : StartRun, !hasSave));
             items.Add(new MenuOverlay.MenuItem("Quit", QuitApp));
+            if (audioDirector != null && theme != null)
+                audioDirector.PlayMusic(theme.musicMenu != null ? theme.musicMenu : theme.music);   // menu track
             menu.Show(title, intro, items, true);   // useLogo: title wordmark if the theme has one
         }
 
@@ -137,6 +140,7 @@ namespace Crossroads.Game.Template
             if (endScreen != null) endScreen.Hide();
             if (menu != null) menu.Hide();
             if (pauseButton != null) pauseButton.SetVisible(true);
+            if (audioDirector != null && theme != null) audioDirector.PlayMusic(theme.music);   // switch to the gameplay track
             RenderCurrent();
         }
 
@@ -162,6 +166,7 @@ namespace Crossroads.Game.Template
         {
             if (MenuBlocking) return;
             if (_engine == null || _engine.Status != GameStatus.Running) return;
+            if (audioDirector != null && theme != null) audioDirector.PlaySfx(theme.swipeSfx);
             _engine.Resolve(side);              // apply the choice only (spec 12.4)
             if (_engine.Status == GameStatus.Running)
             {
