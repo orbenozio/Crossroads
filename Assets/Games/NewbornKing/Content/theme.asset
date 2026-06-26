@@ -20,6 +20,8 @@ MonoBehaviour:
   willBreak: {r: 0.85, g: 0.25, b: 0.25, a: 1}
   keyArt: {fileID: 21300000, guid: 9d79f575b95c1894da16dd6a76b582ec, type: 3}
   logo: {fileID: 21300000, guid: 4a3a0d915da0f574b829c3f90dfd6c15, type: 3}
+  cardArt: {fileID: 21300000, guid: 942bac21398d49c41bcb7afbbcdc4803, type: 3}
+  meterFrame: {fileID: 0}
   music: {fileID: 8300000, guid: 3da5973f93eb0df4fa023b4942bdbb3c, type: 3}
   musicMenu: {fileID: 8300000, guid: 441fdabd9067f3242891155c3920aa31, type: 3}
   swipeSfx: {fileID: 8300000, guid: df212c52ec69c454d8e934921ab27f7d, type: 3}
