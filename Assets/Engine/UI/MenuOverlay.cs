@@ -113,9 +113,10 @@ namespace Crossroads.UI
             rt.sizeDelta = new Vector2(420f, 0f);
             rt.anchoredPosition = Vector2.zero;
 
-            btnGo.GetComponent<Image>().color = item.Primary ? AccentColor() : SecondaryColor();
+            var btn = btnGo.GetComponent<Button>();
+            ApplyButtonStates(btn, item.Primary ? AccentColor() : SecondaryColor());
             int captured = index;
-            btnGo.GetComponent<Button>().onClick.AddListener(() => Invoke(captured));
+            btn.onClick.AddListener(() => Invoke(captured));
 
             var lblGo = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
             var lblRt = (RectTransform)lblGo.transform;
@@ -248,6 +249,25 @@ namespace Crossroads.UI
 
         private Color AccentColor() => _theme != null ? _theme.accent : new Color(0.30f, 0.55f, 0.95f, 1f);
         private Color SecondaryColor() => _theme != null ? _theme.card : new Color(0.28f, 0.28f, 0.33f, 1f);
+
+        // Configures a button's idle / hover / pressed / disabled colors (ColorTint transition). Shared
+        // so the end screen uses the same feel.
+        internal static void ApplyButtonStates(Button b, Color baseColor)
+        {
+            var cb = b.colors;
+            cb.normalColor = baseColor;
+            cb.highlightedColor = Shift(baseColor, 0.14f);
+            cb.pressedColor = Shift(baseColor, -0.16f);
+            cb.selectedColor = Shift(baseColor, 0.08f);
+            cb.disabledColor = new Color(0.3f, 0.3f, 0.34f, 0.5f);
+            cb.colorMultiplier = 1f;
+            cb.fadeDuration = 0.08f;
+            b.colors = cb;
+            if (b.targetGraphic != null) b.targetGraphic.color = Color.white;   // ColorTint multiplies this by the state color
+        }
+
+        private static Color Shift(Color c, float amt) =>
+            new Color(Mathf.Clamp01(c.r + amt), Mathf.Clamp01(c.g + amt), Mathf.Clamp01(c.b + amt), c.a);
 
         private static void Stretch(RectTransform rt)
         {

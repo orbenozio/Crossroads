@@ -154,24 +154,45 @@ namespace UnityAgentBridge.Editor.CustomTools
             }
         }
 
-        // Full-screen themed backdrop behind the card (first sibling). Created/recolored each wire.
+        // Full-screen backdrop behind the card (first sibling). When the theme has key art, the gameplay
+        // background is that art - dimmed (via color tint) and cover-fit so it fills any aspect while the
+        // card stays readable; otherwise a flat themed color. Created/recolored each wire.
         internal static void EnsureBackground(GameObject canvas, Theme theme)
         {
             var found = canvas.transform.Find("Background");
-            Image img;
-            if (found != null) img = found.GetComponent<Image>();
+            GameObject go;
+            if (found != null) go = found.gameObject;
             else
             {
-                var go = new GameObject("Background", typeof(RectTransform), typeof(Image));
+                go = new GameObject("Background", typeof(RectTransform), typeof(Image));
                 go.transform.SetParent(canvas.transform, false);
                 var rt = (RectTransform)go.transform;
                 rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
                 rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
-                img = go.GetComponent<Image>();
-                img.raycastTarget = false;
+                go.GetComponent<Image>().raycastTarget = false;
             }
-            img.color = theme != null ? theme.background : new Color(0.12f, 0.12f, 0.14f);
-            img.transform.SetAsFirstSibling();   // behind the card and HUD
+            var img = go.GetComponent<Image>();
+            var fitter = go.GetComponent<AspectRatioFitter>();
+            bool hasArt = theme != null && theme.keyArt != null;
+            if (hasArt)
+            {
+                img.sprite = theme.keyArt;
+                img.color = new Color(0.34f, 0.34f, 0.42f, 1f);   // dim the art so the card reads on top
+                if (fitter == null) fitter = go.AddComponent<AspectRatioFitter>();
+                fitter.enabled = true;
+                fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fitter.aspectRatio = theme.keyArt.rect.width / theme.keyArt.rect.height;
+            }
+            else
+            {
+                img.sprite = null;
+                img.color = theme != null ? theme.background : new Color(0.12f, 0.12f, 0.14f);
+                if (fitter != null) fitter.enabled = false;
+                var rt = (RectTransform)go.transform;
+                rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            }
+            go.transform.SetAsFirstSibling();   // behind the card and HUD
         }
 
         // Creates an Image on the card (speaker portrait), preserving aspect; starts hidden until bound.

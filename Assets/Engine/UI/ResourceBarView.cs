@@ -51,7 +51,7 @@ namespace Crossroads.UI
                 }
                 // With an icon on the left, the value sits in the right portion so they do not overlap.
                 var lrt = bar.label.rectTransform;
-                lrt.anchorMin = new Vector2(hasIcon ? 0.42f : 0f, 0f);
+                lrt.anchorMin = new Vector2(hasIcon ? 0.50f : 0f, 0f);
                 lrt.anchorMax = Vector2.one;
                 lrt.offsetMin = Vector2.zero; lrt.offsetMax = Vector2.zero;
 
@@ -111,10 +111,10 @@ namespace Crossroads.UI
             _container.anchorMin = new Vector2(0f, 1f);
             _container.anchorMax = new Vector2(1f, 1f);
             _container.pivot = new Vector2(0.5f, 1f);
-            _container.anchoredPosition = new Vector2(0f, -34f);
+            _container.anchoredPosition = new Vector2(0f, -38f);
             // Inset 120 total leaves the top corners clear for the pause button (54px). Taller so the
-            // icons read clearly (icon size is bounded by the bar height via preserveAspect).
-            _container.sizeDelta = new Vector2(-120f, 72f);
+            // framed icons read clearly (icon size is bounded by the bar height via preserveAspect).
+            _container.sizeDelta = new Vector2(-120f, 84f);
         }
 
         // A full-width top strip behind the meters, forming a HUD bar (and a backdrop for the corner
@@ -129,11 +129,23 @@ namespace Crossroads.UI
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot = new Vector2(0.5f, 1f);
             rt.anchoredPosition = Vector2.zero;
-            rt.sizeDelta = new Vector2(0f, 112f);
+            rt.sizeDelta = new Vector2(0f, 130f);
             Color c = _theme != null ? _theme.background : new Color(0.10f, 0.10f, 0.12f);
-            go.GetComponent<Image>().color = new Color(c.r * 0.7f, c.g * 0.7f, c.b * 0.7f, 0.85f);
+            go.GetComponent<Image>().color = new Color(c.r * 0.7f, c.g * 0.7f, c.b * 0.7f, 0.9f);
             go.GetComponent<Image>().raycastTarget = false;
-            rt.SetAsFirstSibling();
+            // Created before the meters and after the gameplay background, so it sits behind the meters
+            // but in front of the background art (no SetAsFirstSibling, which would push it behind).
+
+            // A thin gold divider along the bottom of the HUD strip, separating meters from the card area.
+            var sep = new GameObject("Separator", typeof(RectTransform), typeof(Image));
+            var srt = (RectTransform)sep.transform;
+            srt.SetParent(rt, false);
+            srt.anchorMin = new Vector2(0f, 0f); srt.anchorMax = new Vector2(1f, 0f);
+            srt.pivot = new Vector2(0.5f, 0f);
+            srt.sizeDelta = new Vector2(0f, 3f); srt.anchoredPosition = Vector2.zero;
+            Color accent = _theme != null ? _theme.accent : new Color(0.85f, 0.68f, 0.28f);
+            sep.GetComponent<Image>().color = new Color(accent.r, accent.g, accent.b, 0.5f);
+            sep.GetComponent<Image>().raycastTarget = false;
         }
 
         private Bar Ensure(string id)
@@ -169,7 +181,7 @@ namespace Crossroads.UI
             var frameRt = (RectTransform)frameGo.transform;
             frameRt.SetParent(root, false);
             frameRt.anchorMin = new Vector2(0.0f, 0.0f);
-            frameRt.anchorMax = new Vector2(0.47f, 1.0f);
+            frameRt.anchorMax = new Vector2(0.50f, 1.0f);
             frameRt.offsetMin = Vector2.zero; frameRt.offsetMax = Vector2.zero;
             var frameImg = frameGo.GetComponent<Image>();
             frameImg.preserveAspect = true; frameImg.raycastTarget = false; frameImg.color = Color.white;
@@ -178,8 +190,9 @@ namespace Crossroads.UI
             var iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
             var iconRt = (RectTransform)iconGo.transform;
             iconRt.SetParent(root, false);
-            iconRt.anchorMin = new Vector2(0.05f, 0.06f);
-            iconRt.anchorMax = new Vector2(0.42f, 0.94f);
+            // Sits inside the frame's ring (centered on the frame's center x = 0.25).
+            iconRt.anchorMin = new Vector2(0.11f, 0.17f);
+            iconRt.anchorMax = new Vector2(0.39f, 0.83f);
             iconRt.offsetMin = Vector2.zero; iconRt.offsetMax = Vector2.zero;
             var iconImg = iconGo.GetComponent<Image>();
             iconImg.preserveAspect = true; iconImg.raycastTarget = false; iconImg.color = Color.white;

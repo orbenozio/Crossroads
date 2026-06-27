@@ -85,8 +85,9 @@ namespace Crossroads.UI
             btnRt.anchorMin = new Vector2(0.5f, y); btnRt.anchorMax = new Vector2(0.5f, y);
             btnRt.pivot = new Vector2(0.5f, 0.5f);
             btnRt.sizeDelta = new Vector2(320f, 92f); btnRt.anchoredPosition = Vector2.zero;
-            btnGo.GetComponent<Image>().color = color;
-            btnGo.GetComponent<Button>().onClick.AddListener(onClick);
+            var btn = btnGo.GetComponent<Button>();
+            MenuOverlay.ApplyButtonStates(btn, color);   // idle/hover/pressed feel, shared with the menu
+            btn.onClick.AddListener(onClick);
 
             var lblGo = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
             var lblRt = (RectTransform)lblGo.transform;
