@@ -59,6 +59,7 @@ namespace Crossroads.Game.Template
             UIFonts.UseThemeFont(theme);                                // per-game font (TMP type stays in the UI layer)
             if (resourceBar != null) resourceBar.SetTheme(theme);
             if (menu != null) menu.SetTheme(theme);
+            if (endScreen != null) endScreen.SetTheme(theme);
             if (swipeInput != null)
             {
                 swipeInput.OnCommit += HandleCommit;

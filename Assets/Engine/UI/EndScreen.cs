@@ -12,8 +12,11 @@ namespace Crossroads.UI
         private RectTransform _panel;
         private TMP_Text _message;
         private RectTransform _menuButton;
+        private Theme _theme;
         private Action _onRestart;
         private Action _onMenu;
+
+        public void SetTheme(Theme t) => _theme = t;
 
         public void Show(string text, Action onRestart) => Show(text, onRestart, null);
 
@@ -70,23 +73,23 @@ namespace Crossroads.UI
             UIFonts.Apply(_message); _message.fontSize = 40; _message.alignment = TextAlignmentOptions.Center;
             _message.color = Color.white; _message.raycastTarget = false;
 
-            MakeButton("RestartButton", 0.34f, new Color(0.30f, 0.55f, 0.95f, 1f), "Restart", OnRestartClicked);
-            _menuButton = MakeButton("MenuButton", 0.18f, new Color(0.28f, 0.28f, 0.33f, 1f), "Main Menu", OnMenuClicked);
+            MakeButton("RestartButton", 0.34f, true, "Restart", OnRestartClicked);
+            _menuButton = MakeButton("MenuButton", 0.18f, false, "Main Menu", OnMenuClicked);
             _menuButton.gameObject.SetActive(false);
 
             _panel.gameObject.SetActive(false);
         }
 
-        private RectTransform MakeButton(string name, float y, Color color, string text, UnityEngine.Events.UnityAction onClick)
+        private RectTransform MakeButton(string name, float y, bool primary, string text, UnityEngine.Events.UnityAction onClick)
         {
             var btnGo = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
             var btnRt = (RectTransform)btnGo.transform;
             btnRt.SetParent(_panel, false);
             btnRt.anchorMin = new Vector2(0.5f, y); btnRt.anchorMax = new Vector2(0.5f, y);
             btnRt.pivot = new Vector2(0.5f, 0.5f);
-            btnRt.sizeDelta = new Vector2(320f, 92f); btnRt.anchoredPosition = Vector2.zero;
+            btnRt.sizeDelta = new Vector2(380f, 116f); btnRt.anchoredPosition = Vector2.zero;
             var btn = btnGo.GetComponent<Button>();
-            MenuOverlay.ApplyButtonStates(btn, color);   // idle/hover/pressed feel, shared with the menu
+            MenuOverlay.ConfigureButtonVisual(btnGo.GetComponent<Image>(), btn, _theme, primary);   // same plate/states as the menu
             btn.onClick.AddListener(onClick);
 
             var lblGo = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));

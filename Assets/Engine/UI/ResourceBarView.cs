@@ -27,6 +27,8 @@ namespace Crossroads.UI
                 ResourceView v = views[i];
                 Bar bar = Ensure(v.Id);
                 Place(bar.root, i, views.Count);
+                var rootImg = bar.root.GetComponent<Image>();
+                if (rootImg != null) rootImg.color = PlateColor();   // refresh on bind so existing bars get the theme plate too
 
                 float range = v.Max - v.Min;
                 float pct = range > 0f ? Mathf.Clamp01((v.Value - v.Min) / range) : 0f;
@@ -83,6 +85,13 @@ namespace Crossroads.UI
         {
             foreach (var kv in _bars)
                 if (kv.Value.baseLabel != null) kv.Value.label.text = kv.Value.baseLabel;
+        }
+
+        // A darker, richer meter plate (was a pale translucent track) so the icon + value read clearly.
+        private Color PlateColor()
+        {
+            Color b = _theme != null ? _theme.background : new Color(0.10f, 0.10f, 0.13f);
+            return new Color(b.r * 1.4f + 0.04f, b.g * 1.4f + 0.04f, b.b * 1.5f + 0.05f, 0.72f);
         }
 
         private Color FillColor(DangerLevel d)
@@ -173,7 +182,7 @@ namespace Crossroads.UI
             var rootGo = new GameObject(barName, typeof(RectTransform), typeof(Image));
             var root = (RectTransform)rootGo.transform;
             root.SetParent(_container, false);
-            rootGo.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.12f); // track
+            rootGo.GetComponent<Image>().color = PlateColor();
 
             var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
             var fill = (RectTransform)fillGo.transform;
