@@ -119,7 +119,7 @@ namespace Crossroads.UI
             rt.anchoredPosition = Vector2.zero;
 
             var btn = btnGo.GetComponent<Button>();
-            ApplyButtonStates(btn, item.Primary ? AccentColor() : SecondaryColor());
+            ConfigureButtonVisual(btnGo.GetComponent<Image>(), btn, _theme, item.Primary);
             int captured = index;
             btn.onClick.AddListener(() => Invoke(captured));
 
@@ -252,11 +252,28 @@ namespace Crossroads.UI
             return new Color(0.06f, 0.06f, 0.09f, 0.97f);
         }
 
-        private Color AccentColor() => _theme != null ? _theme.accent : new Color(0.30f, 0.55f, 0.95f, 1f);
-        private Color SecondaryColor() => _theme != null ? _theme.card : new Color(0.28f, 0.28f, 0.33f, 1f);
+        private static Color AccentOf(Theme t) => t != null ? t.accent : new Color(0.30f, 0.55f, 0.95f, 1f);
+        private static Color SecondaryOf(Theme t) => t != null ? t.card : new Color(0.28f, 0.28f, 0.33f, 1f);
 
-        // Configures a button's idle / hover / pressed / disabled colors (ColorTint transition). Shared
-        // so the end screen uses the same feel.
+        // Sets a button's look: a 9-sliced plate sprite when the theme has one (grayscale tint states so
+        // the art shows true), else a flat accent/secondary color. Shared so the end screen matches.
+        internal static void ConfigureButtonVisual(Image img, Button btn, Theme theme, bool primary)
+        {
+            if (theme != null && theme.buttonSprite != null)
+            {
+                img.sprite = theme.buttonSprite;
+                // The plate's aspect (~3:1) matches the button, so Simple stretches cleanly; Sliced would
+                // collapse since the ornate end-caps are wider than a single button.
+                img.type = Image.Type.Simple;
+                ApplyButtonStates(btn, primary ? new Color(1f, 0.97f, 0.9f) : new Color(0.82f, 0.82f, 0.86f));
+            }
+            else
+            {
+                ApplyButtonStates(btn, primary ? AccentOf(theme) : SecondaryOf(theme));
+            }
+        }
+
+        // Configures a button's idle / hover / pressed / disabled colors (ColorTint transition).
         internal static void ApplyButtonStates(Button b, Color baseColor)
         {
             var cb = b.colors;

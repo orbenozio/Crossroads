@@ -50,16 +50,16 @@ namespace UnityAgentBridge.Editor.CustomTools
             var body = EnsureTmpBody(card);
             // Bands: portrait + speaker name at the top, choice hints at the bottom, body in the middle.
             var bodyRt = (RectTransform)body.transform;
-            bodyRt.anchorMin = new Vector2(0.08f, 0.16f); bodyRt.anchorMax = new Vector2(0.92f, 0.67f);
+            bodyRt.anchorMin = new Vector2(0.08f, 0.16f); bodyRt.anchorMax = new Vector2(0.92f, 0.64f);
             bodyRt.offsetMin = Vector2.zero; bodyRt.offsetMax = Vector2.zero;
-            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.33f, 0.745f), new Vector2(0.67f, 0.975f));
-            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.685f), new Vector2(0.92f, 0.74f), 26, TextAlignmentOptions.Center);
+            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.30f, 0.715f), new Vector2(0.70f, 0.985f));
+            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.655f), new Vector2(0.92f, 0.71f), 26, TextAlignmentOptions.Center);
             // Raised off the bottom border into the card's dark center, each on a subtle dark plate so
             // the hint text does not get lost in the ornate card art.
-            MakeCardPlate(card, "ChoiceLeftBg", new Vector2(0.06f, 0.095f), new Vector2(0.48f, 0.185f));
-            MakeCardPlate(card, "ChoiceRightBg", new Vector2(0.52f, 0.095f), new Vector2(0.94f, 0.185f));
-            var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.08f, 0.10f), new Vector2(0.47f, 0.18f), 22, TextAlignmentOptions.Left);
-            var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.53f, 0.10f), new Vector2(0.92f, 0.18f), 22, TextAlignmentOptions.Right);
+            MakeCardPlate(card, "ChoiceLeftBg", new Vector2(0.05f, 0.085f), new Vector2(0.48f, 0.20f));
+            MakeCardPlate(card, "ChoiceRightBg", new Vector2(0.52f, 0.085f), new Vector2(0.95f, 0.20f));
+            var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.07f, 0.09f), new Vector2(0.47f, 0.195f), 30, TextAlignmentOptions.Left);
+            var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.53f, 0.09f), new Vector2(0.93f, 0.195f), 30, TextAlignmentOptions.Right);
 
             // CardView on Card, wired to the TMP body + portrait + speaker/choice labels + the card Image.
             var cardView = card.GetComponent<CardView>() ?? card.AddComponent<CardView>();
@@ -229,7 +229,7 @@ namespace UnityAgentBridge.Editor.CustomTools
             rt.anchorMin = aMin; rt.anchorMax = aMax;
             rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
             var img = go.GetComponent<Image>();
-            img.color = new Color(0f, 0f, 0f, 0.32f);
+            img.color = new Color(0f, 0f, 0f, 0.5f);
             img.raycastTarget = false;
             return img;
         }

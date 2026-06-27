@@ -22,6 +22,7 @@ MonoBehaviour:
   logo: {fileID: 21300000, guid: 4a3a0d915da0f574b829c3f90dfd6c15, type: 3}
   cardArt: {fileID: 21300000, guid: 942bac21398d49c41bcb7afbbcdc4803, type: 3}
   meterFrame: {fileID: 21300000, guid: 3eaf1695bb4a7cf4ab749af1d53fb0cb, type: 3}
+  buttonSprite: {fileID: 21300000, guid: f2f94610bbc96c44f84d2d24ce5f5dcb, type: 3}
   music: {fileID: 8300000, guid: 3da5973f93eb0df4fa023b4942bdbb3c, type: 3}
   musicMenu: {fileID: 8300000, guid: 441fdabd9067f3242891155c3920aa31, type: 3}
   swipeSfx: {fileID: 8300000, guid: df212c52ec69c454d8e934921ab27f7d, type: 3}

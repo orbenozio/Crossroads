@@ -19,7 +19,7 @@ namespace Crossroads.UI
         [SerializeField] private Image cardBackground;
 
         private const float EnterDuration = 0.18f;
-        private static readonly Color DimChoice = new Color(1f, 1f, 1f, 0.62f);   // resting choice-hint color
+        private static readonly Color DimChoice = new Color(1f, 0.92f, 0.72f, 0.9f);   // resting choice-hint color (warm, prominent)
         private RectTransform _rt;
         private Coroutine _enter;
         private TMP_Text _previewDelta;   // on-card delta summary during swipe (§10.3)
