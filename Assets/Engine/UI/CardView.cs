@@ -19,7 +19,7 @@ namespace Crossroads.UI
         [SerializeField] private Image cardBackground;
 
         private const float EnterDuration = 0.18f;
-        private static readonly Color DimChoice = new Color(1f, 1f, 1f, 0.45f);   // resting choice-hint color
+        private static readonly Color DimChoice = new Color(1f, 1f, 1f, 0.62f);   // resting choice-hint color
         private RectTransform _rt;
         private Coroutine _enter;
         private TMP_Text _previewDelta;   // on-card delta summary during swipe (§10.3)
@@ -81,8 +81,9 @@ namespace Crossroads.UI
             StopEnter();
             float dir = side == ChoiceSide.Left ? -1f : 1f;
             float f = Mathf.Clamp01(fraction);
-            Rt.anchoredPosition = new Vector2(dir * f * 240f, 0f);
-            Rt.localRotation = Quaternion.Euler(0f, 0f, -dir * f * 8f);
+            // Kept modest so a large card tilts in place without sliding off-screen.
+            Rt.anchoredPosition = new Vector2(dir * f * 120f, 0f);
+            Rt.localRotation = Quaternion.Euler(0f, 0f, -dir * f * 5f);
 
             TMP_Text active = side == ChoiceSide.Left ? leftLabel : rightLabel;
             TMP_Text other = side == ChoiceSide.Left ? rightLabel : leftLabel;

@@ -71,8 +71,11 @@ namespace Crossroads.UI
             {
                 if (deltas[i].Delta == 0) continue;
                 if (!_bars.TryGetValue(deltas[i].ResourceId, out Bar bar)) continue;
-                string sign = deltas[i].Delta > 0 ? "+" : "";
-                bar.label.text = bar.baseLabel + "   " + sign + deltas[i].Delta;
+                int d = deltas[i].Delta;
+                // Colored + bold so the pending change stands out: green for a gain, red for a loss.
+                string hex = d > 0 ? "#73E68C" : "#FF6B6B";
+                string sign = d > 0 ? "+" : "";
+                bar.label.text = bar.baseLabel + "  <b><color=" + hex + ">" + sign + d + "</color></b>";
             }
         }
 

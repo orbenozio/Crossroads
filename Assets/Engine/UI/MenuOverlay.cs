@@ -70,15 +70,20 @@ namespace Crossroads.UI
             if (_panel != null) _panel.gameObject.SetActive(false);
         }
 
+        private static readonly Key[] RowDigits =
+            { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6, Key.Digit7, Key.Digit8, Key.Digit9 };
+        private static readonly Key[] NumpadDigits =
+            { Key.Numpad1, Key.Numpad2, Key.Numpad3, Key.Numpad4, Key.Numpad5, Key.Numpad6, Key.Numpad7, Key.Numpad8, Key.Numpad9 };
+
         private void Update()
         {
             if (!IsShown) return;
             var k = Keyboard.current;
             if (k == null) return;
-            // Number keys 1..9 activate the matching button (same accessibility model as MapView).
+            // Number keys 1..9 (top row or numpad) activate the matching button (accessibility, like MapView).
             for (int i = 0; i < _actions.Count && i < 9; i++)
             {
-                if (k[(Key)((int)Key.Digit1 + i)].wasPressedThisFrame) { Invoke(i); return; }
+                if (k[RowDigits[i]].wasPressedThisFrame || k[NumpadDigits[i]].wasPressedThisFrame) { Invoke(i); return; }
             }
         }
 

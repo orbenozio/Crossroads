@@ -53,8 +53,12 @@ namespace UnityAgentBridge.Editor.CustomTools
             bodyRt.offsetMin = Vector2.zero; bodyRt.offsetMax = Vector2.zero;
             var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.33f, 0.745f), new Vector2(0.67f, 0.975f));
             var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.685f), new Vector2(0.92f, 0.74f), 26, TextAlignmentOptions.Center);
-            var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.06f, 0.03f), new Vector2(0.48f, 0.14f), 22, TextAlignmentOptions.Left);
-            var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.52f, 0.03f), new Vector2(0.94f, 0.14f), 22, TextAlignmentOptions.Right);
+            // Raised off the bottom border into the card's dark center, each on a subtle dark plate so
+            // the hint text does not get lost in the ornate card art.
+            MakeCardPlate(card, "ChoiceLeftBg", new Vector2(0.06f, 0.095f), new Vector2(0.48f, 0.185f));
+            MakeCardPlate(card, "ChoiceRightBg", new Vector2(0.52f, 0.095f), new Vector2(0.94f, 0.185f));
+            var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.08f, 0.10f), new Vector2(0.47f, 0.18f), 22, TextAlignmentOptions.Left);
+            var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.53f, 0.10f), new Vector2(0.92f, 0.18f), 22, TextAlignmentOptions.Right);
 
             // CardView on Card, wired to the TMP body + portrait + speaker/choice labels + the card Image.
             var cardView = card.GetComponent<CardView>() ?? card.AddComponent<CardView>();
@@ -210,6 +214,22 @@ namespace UnityAgentBridge.Editor.CustomTools
             img.raycastTarget = false;
             img.color = Color.white;
             go.SetActive(false);
+            return img;
+        }
+
+        // Creates a subtle dark plate (behind a choice hint) so the text reads over the ornate card art.
+        internal static Image MakeCardPlate(GameObject card, string name, Vector2 aMin, Vector2 aMax)
+        {
+            var found = card.transform.Find(name);
+            if (found != null) UnityEngine.Object.DestroyImmediate(found.gameObject);
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(card.transform, false);
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = aMin; rt.anchorMax = aMax;
+            rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            var img = go.GetComponent<Image>();
+            img.color = new Color(0f, 0f, 0f, 0.32f);
+            img.raycastTarget = false;
             return img;
         }
 
