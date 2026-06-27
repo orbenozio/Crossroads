@@ -6,12 +6,13 @@ using UnityAgentBridge.Editor;
 namespace UnityAgentBridge.Editor.CustomTools
 {
     // Forces crisp import settings on every texture under a folder. Keeps compression (small build) but
-    // uses HIGH-QUALITY compression: on desktop that is BC7 - the same byte size as the default BC3/DXT5
-    // but near-lossless, which removes the banding/"pixelated" look on the gold gradients. Bilinear
-    // filter, full max size, no mipmaps (UI art is drawn at ~1:1, mipmaps would only soften it).
+    // uses HIGH-QUALITY compression (BC7 on desktop - same byte size as BC3, near-lossless). Generates
+    // mipmaps and clamps maxSize so sprites shown much smaller than native (portraits, icons) downsample
+    // smoothly instead of aliasing into a "pixelated"/noisy look. maxSize lets each folder be right-sized
+    // to its on-screen size.
     public static class set_art_quality
     {
-        [McpTool("set_art_quality", "Set crisp high-quality (BC7) import settings on all textures under a folder")]
+        [McpTool("set_art_quality", "Set crisp BC7 + mipmap import settings on textures under a folder (right-size via maxSize)")]
         public static object Invoke(string folder = "", int maxSize = 2048)
         {
             if (string.IsNullOrEmpty(folder)) throw new Exception("folder is required");
@@ -30,7 +31,7 @@ namespace UnityAgentBridge.Editor.CustomTools
                 imp.compressionQuality = 100;
                 imp.crunchedCompression = false;
                 imp.filterMode = FilterMode.Bilinear;
-                imp.mipmapEnabled = false;
+                imp.mipmapEnabled = false;   // full resolution, no mip softening - UI art must match the source
                 imp.maxTextureSize = maxSize;
 
                 // Clear any per-platform overrides so the uncompressed default is used everywhere.
