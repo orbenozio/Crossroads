@@ -10,6 +10,7 @@ namespace Crossroads.UI
     {
         private static TMP_FontAsset _default;
         public static bool RightToLeft;   // מוגדר ע"י ה-bootstrap מה-Theme לפני בניית ה-UI
+        public static TMP_FontAsset Current;   // per-game font from the Theme; falls back to Default when null
 
         public static TMP_FontAsset Default
         {
@@ -21,11 +22,15 @@ namespace Crossroads.UI
             }
         }
 
+        // Sets the per-game font from a Theme. Kept here (UI layer) so the thin Game bootstrap never
+        // has to reference the TMP assembly itself.
+        public static void UseThemeFont(Theme theme) => Current = theme != null ? theme.tmpFont : null;
+
         // החלת פונט + כיוון-טקסט על רכיב TMP. נקראת אחרי יצירת כל טקסט פרוצדורלי.
         public static void Apply(TMP_Text t)
         {
             if (t == null) return;
-            var f = Default;
+            var f = Current != null ? Current : Default;
             if (f != null) t.font = f;
             t.isRightToLeftText = RightToLeft;
         }

@@ -56,6 +56,7 @@ namespace Crossroads.Game.Template
             }
 
             UIFonts.RightToLeft = theme != null && theme.rightToLeft;   // Hebrew/RTL before building the UI (§10.6)
+            UIFonts.UseThemeFont(theme);                                // per-game font (TMP type stays in the UI layer)
             if (resourceBar != null) resourceBar.SetTheme(theme);
             if (menu != null) menu.SetTheme(theme);
             if (swipeInput != null)

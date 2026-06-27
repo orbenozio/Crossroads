@@ -39,6 +39,7 @@ namespace UnityAgentBridge.Editor.CustomTools
                 throw new Exception("expected Canvas + Canvas/Card in the active scene (build them via create_canvas + create_gameobject first)");
 
             UIFonts.RightToLeft = theme != null && theme.rightToLeft;   // Hebrew/RTL from the Theme (for display + screenshot)
+            UIFonts.Current = theme != null ? theme.tmpFont : null;     // per-game font (for display + screenshot)
 
             // Rebuild old procedural UI (legacy Text) as TMP - matters when migrating existing scenes.
             CleanOldUi(canvas);

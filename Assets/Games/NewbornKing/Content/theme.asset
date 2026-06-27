@@ -28,6 +28,7 @@ MonoBehaviour:
   cardSfx: {fileID: 8300000, guid: 7d4ea43774903e34582b866a1cc9aa13, type: 3}
   clickSfx: {fileID: 8300000, guid: a968acfe733b4c34b8e7f984f159b399, type: 3}
   font: {fileID: 0}
+  tmpFont: {fileID: 11400000, guid: 93a3d5f4f92f01745a0afd124de8d7af, type: 2}
   rightToLeft: 0
   resourceLabels:
   - id: baby

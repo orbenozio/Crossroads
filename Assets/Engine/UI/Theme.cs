@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace Crossroads.UI
 {
@@ -31,6 +32,7 @@ namespace Crossroads.UI
 
         [Header("Typography")]
         public Font font;
+        public TMP_FontAsset tmpFont;   // per-game UI font; null = the global default (UIFonts.Default)
         public bool rightToLeft;   // עברית/RTL: ה-bootstrap מעביר ל-UIFonts.RightToLeft לפני בניית ה-UI (§10.6)
 
         [Header("Overrides")]
