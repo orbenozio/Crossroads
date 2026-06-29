@@ -153,6 +153,7 @@ namespace Crossroads.Game.Lighthouse
         {
             if (menu == null || menu.IsShown) return;
             if (_engine == null || _engine.Status != GameStatus.Running) return;
+            _previewSide = null;   // a drag interrupted by the menu must re-show its preview on resume (review)
             menu.Show("Paused", null, new[]
             {
                 new MenuOverlay.MenuItem("Resume", null, true),   // Invoke() hides the menu; that is the resume
@@ -169,6 +170,7 @@ namespace Crossroads.Game.Lighthouse
         {
             if (MenuBlocking) return;
             if (_engine == null || _engine.Status != GameStatus.Running) return;
+            _previewSide = null;
             if (audioDirector != null && theme != null) audioDirector.PlaySfx(theme.swipeSfx);
             _engine.Resolve(side);              // apply the choice only (spec 12.4)
             if (_engine.Status == GameStatus.Running)
@@ -178,15 +180,18 @@ namespace Crossroads.Game.Lighthouse
                 // save-on-commit (J4/M5): only if still running after Advance. If Advance ended the run,
                 // HandleGameOver already deleted the save - do not rewrite it for a finished run.
                 if (_engine.Status == GameStatus.Running) SaveSystem.Save(_engine.State);
-                Debug.Log($"[Crossroads] swipe {side} -> {_engine.Current?.Id}: {_engine.Current?.Body}");
             }
         }
+
+        private ChoiceSide? _previewSide;   // the on-card/meter preview only changes when the dragged side changes
 
         private void HandlePreview(ChoiceSide side, float fraction)
         {
             if (MenuBlocking) return;
-            if (cardView != null) cardView.ApplyDrag(side, fraction);
+            if (cardView != null) cardView.ApplyDrag(side, fraction);    // per-frame, must stay smooth
             if (_engine == null || _engine.Status != GameStatus.Running) return;
+            if (_previewSide == side) return;   // skip the per-frame Preview/FormatDeltas/string churn while the side is unchanged
+            _previewSide = side;
             var deltas = _engine.Preview(side).Deltas;                    // projected delta (spec 10.3)
             if (resourceBar != null) resourceBar.ShowPreview(deltas);     // on the meters
             if (cardView != null) cardView.ShowPreviewDeltas(ViewMapper.FormatDeltas(deltas, resources, theme), side); // and on the card
@@ -194,6 +199,7 @@ namespace Crossroads.Game.Lighthouse
 
         private void HandleCancel()
         {
+            _previewSide = null;
             if (cardView != null) cardView.ResetDrag();
             if (resourceBar != null) resourceBar.ClearPreview();
         }

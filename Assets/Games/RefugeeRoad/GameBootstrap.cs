@@ -98,14 +98,19 @@ namespace Crossroads.Game.RefugeeRoad
         private void HandleCommit(ChoiceSide side)
         {
             if (_engine == null || _engine.Status != GameStatus.Running) return;
+            _previewSide = null;
             _engine.Resolve(side);                 // החלת הבחירה בלבד (ספק 12.4)
             if (_engine.Status == GameStatus.Running) ShowMap();  // מסע: ניווט דרך המפה, לא Advance
         }
 
+        private ChoiceSide? _previewSide;   // the on-card/meter preview only changes when the dragged side changes
+
         private void HandlePreview(ChoiceSide side, float fraction)
         {
-            if (cardView != null) cardView.ApplyDrag(side, fraction);
+            if (cardView != null) cardView.ApplyDrag(side, fraction);    // per-frame, must stay smooth
             if (_engine == null || _engine.Status != GameStatus.Running) return;
+            if (_previewSide == side) return;   // skip the per-frame Preview/FormatDeltas/string churn while the side is unchanged
+            _previewSide = side;
             var deltas = _engine.Preview(side).Deltas;
             if (resourceBar != null) resourceBar.ShowPreview(deltas);
             if (cardView != null) cardView.ShowPreviewDeltas(ViewMapper.FormatDeltas(deltas, resources, theme), side);
@@ -113,6 +118,7 @@ namespace Crossroads.Game.RefugeeRoad
 
         private void HandleCancel()
         {
+            _previewSide = null;
             if (cardView != null) cardView.ResetDrag();
             if (resourceBar != null) resourceBar.ClearPreview();
         }
