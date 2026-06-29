@@ -14,6 +14,9 @@ namespace Crossroads.UI
         private Theme _theme;
         private RectTransform _container;
         private readonly Dictionary<string, Bar> _bars = new Dictionary<string, Bar>();
+        // Tints the bright-gold meter icon art down to the card's muted antique-bronze, so the HUD reads
+        // as the same material as the medallion/card instead of "shouting gold" (ux review: less gold).
+        private static readonly Color MeterIconTint = new Color(0.72f, 0.64f, 0.48f, 1f);
 
         private sealed class Bar { public RectTransform root; public RectTransform fill; public Image fillImg; public Image frame; public Image icon; public TextMeshProUGUI label; public string baseLabel; }
 
@@ -22,11 +25,13 @@ namespace Crossroads.UI
         public void Bind(IReadOnlyList<ResourceView> views)
         {
             EnsureContainer();
+            ApplySafeArea();   // drop the HUD below the notch on device (no-op in the editor)
             for (int i = 0; i < views.Count; i++)
             {
                 ResourceView v = views[i];
                 Bar bar = Ensure(v.Id);
                 Place(bar.root, i, views.Count);
+                StyleValueLabel(bar.label);   // bold + auto-fit so "value !! +d" never spills the narrow plate (ux review)
                 var rootImg = bar.root.GetComponent<Image>();
                 if (rootImg != null) rootImg.color = PlateColor();   // refresh on bind so existing bars get the theme plate too
 
@@ -43,7 +48,7 @@ namespace Crossroads.UI
                 if (bar.icon != null)
                 {
                     bar.icon.gameObject.SetActive(hasIcon);
-                    if (hasIcon) { bar.icon.sprite = v.Icon; bar.icon.color = Color.white; }
+                    if (hasIcon) { bar.icon.sprite = v.Icon; bar.icon.color = MeterIconTint; }
                 }
                 if (bar.frame != null)
                 {
@@ -51,11 +56,12 @@ namespace Crossroads.UI
                     bar.frame.gameObject.SetActive(hasFrame);
                     if (hasFrame) bar.frame.sprite = _theme.meterFrame;
                 }
+                if (hasIcon) StyleMeterIcon(bar);   // size the icon + ring every bind so it is not stuck tiny (ux)
                 // With an icon on the left, the value sits in the right portion so they do not overlap.
                 var lrt = bar.label.rectTransform;
                 lrt.anchorMin = new Vector2(hasIcon ? 0.50f : 0f, 0f);
                 lrt.anchorMax = Vector2.one;
-                lrt.offsetMin = Vector2.zero; lrt.offsetMax = Vector2.zero;
+                lrt.offsetMin = new Vector2(6f, 0f); lrt.offsetMax = new Vector2(-12f, 0f);   // keep the value + delta off both plate edges (ux review)
 
                 string mark = v.Danger == DangerLevel.WillBreak ? "  !!" : v.Danger == DangerLevel.Approaching ? "  !" : "";
                 bar.baseLabel = (hasIcon ? v.Value.ToString() : v.DisplayName + " " + v.Value) + mark;
@@ -77,8 +83,42 @@ namespace Crossroads.UI
                 // Colored + bold so the pending change stands out: green for a gain, red for a loss.
                 string hex = d > 0 ? "#73E68C" : "#FF6B6B";
                 string sign = d > 0 ? "+" : "";
-                bar.label.text = bar.baseLabel + "  <b><color=" + hex + ">" + sign + d + "</color></b>";
+                // Smaller so "5 +1" stays inside its plate instead of pushing toward the neighbour (ux re-review).
+                bar.label.text = bar.baseLabel + " <size=72%><b><color=" + hex + ">" + sign + d + "</color></b></size>";
             }
+        }
+
+        // Sizes the meter icon + its ring frame larger than the cramped default so the HUD symbols read
+        // clearly (they were too small). meterframe.png's ring sits at ~0.74 of its radius, so the frame
+        // box is scaled past the plate height - the transparent margin overflows harmlessly - to bring the
+        // ring up near the plate; the icon fills the ring's inner opening. Centered on the plate's left
+        // half (x = 0.25). Applied every Bind so existing/scene-baked bars resize too, not just new ones.
+        private static void StyleMeterIcon(Bar bar)
+        {
+            if (bar.frame != null && bar.frame.gameObject.activeSelf)
+            {
+                var frt = bar.frame.rectTransform;
+                frt.anchorMin = frt.anchorMax = new Vector2(0.25f, 0.5f);
+                frt.pivot = new Vector2(0.5f, 0.5f);
+                frt.sizeDelta = new Vector2(132f, 132f);
+                frt.anchoredPosition = Vector2.zero;
+            }
+            var irt = bar.icon.rectTransform;
+            irt.anchorMin = irt.anchorMax = new Vector2(0.25f, 0.5f);
+            irt.pivot = new Vector2(0.5f, 0.5f);
+            irt.sizeDelta = new Vector2(82f, 82f);
+            irt.anchoredPosition = Vector2.zero;
+        }
+
+        // The meter value: bold, centered, and auto-sized so a danger mark + swipe delta ("5 !! +2")
+        // shrinks to stay inside the narrow plate instead of overflowing it (ux review). A single digit
+        // still renders at the max size, so the normal HUD reads exactly as before.
+        private static void StyleValueLabel(TextMeshProUGUI label)
+        {
+            label.fontStyle = FontStyles.Bold;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 18f;
+            label.fontSizeMax = 30f;
         }
 
         public void ClearPreview()
@@ -108,6 +148,21 @@ namespace Crossroads.UI
             return new Color(0.35f, 0.55f, 0.85f);
         }
 
+        // Pushes the meter content below the device notch and stretches the dark plate up to cover the
+        // notch strip. Runs every Bind so it applies to scene-baked HUD elements too, not just freshly
+        // created ones. Zero inset in the editor -> the layout is unchanged there.
+        private void ApplySafeArea()
+        {
+            float top = SafeArea.TopInset(this);
+            if (_container != null)
+            {
+                _container.anchoredPosition = new Vector2(0f, -38f - top);
+                _container.sizeDelta = new Vector2(-140f, 104f);   // wider side margins so the 4 plates breathe (ux re-review)
+            }
+            if (transform.Find("MetersBg") is RectTransform bg)
+                bg.sizeDelta = new Vector2(0f, 152f + top);
+        }
+
         private void EnsureContainer()
         {
             if (_container != null) return;
@@ -124,9 +179,9 @@ namespace Crossroads.UI
             _container.anchorMax = new Vector2(1f, 1f);
             _container.pivot = new Vector2(0.5f, 1f);
             _container.anchoredPosition = new Vector2(0f, -38f);
-            // Inset 120 total leaves the top corners clear for the pause button (54px). Taller so the
-            // framed icons read clearly (icon size is bounded by the bar height via preserveAspect).
-            _container.sizeDelta = new Vector2(-120f, 84f);
+            // Inset 140 total leaves the top corners clear for the pause button (54px) plus side margin.
+            // Taller so the framed icons read clearly (icon size is bounded by the bar height via preserveAspect).
+            _container.sizeDelta = new Vector2(-140f, 104f);   // taller meters + wider margins (agent #2 / ux re-review)
         }
 
         // A full-width top strip behind the meters, forming a HUD bar (and a backdrop for the corner
@@ -141,7 +196,7 @@ namespace Crossroads.UI
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot = new Vector2(0.5f, 1f);
             rt.anchoredPosition = Vector2.zero;
-            rt.sizeDelta = new Vector2(0f, 130f);
+            rt.sizeDelta = new Vector2(0f, 152f);
             Color c = _theme != null ? _theme.background : new Color(0.10f, 0.10f, 0.12f);
             go.GetComponent<Image>().color = new Color(c.r * 0.7f, c.g * 0.7f, c.b * 0.7f, 0.9f);
             go.GetComponent<Image>().raycastTarget = false;
@@ -156,7 +211,7 @@ namespace Crossroads.UI
             srt.pivot = new Vector2(0.5f, 0f);
             srt.sizeDelta = new Vector2(0f, 3f); srt.anchoredPosition = Vector2.zero;
             Color accent = _theme != null ? _theme.accent : new Color(0.85f, 0.68f, 0.28f);
-            sep.GetComponent<Image>().color = new Color(accent.r, accent.g, accent.b, 0.5f);
+            sep.GetComponent<Image>().color = new Color(accent.r, accent.g, accent.b, 0.7f);   // a touch stronger now the accent is muted bronze (ux round 2)
             sep.GetComponent<Image>().raycastTarget = false;
         }
 
@@ -217,11 +272,11 @@ namespace Crossroads.UI
             labelRt.offsetMin = Vector2.zero; labelRt.offsetMax = Vector2.zero;
             var label = labelGo.GetComponent<TextMeshProUGUI>();
             UIFonts.Apply(label);
-            label.fontSize = 26;
             label.alignment = TextAlignmentOptions.Center;
             label.color = Color.white;
             label.enableWordWrapping = false;
             label.raycastTarget = false;
+            StyleValueLabel(label);
 
             var bar = new Bar { root = root, fill = fill, fillImg = fillImg, frame = frameImg, icon = iconImg, label = label };
             _bars[id] = bar;
@@ -242,7 +297,7 @@ namespace Crossroads.UI
 
         private void Place(RectTransform root, int index, int count)
         {
-            const float pad = 0.01f;
+            const float pad = 0.022f;   // clearer gap between plates so they read as 4 units (ux review round 3)
             float x0 = (float)index / count;
             float x1 = (float)(index + 1) / count;
             root.anchorMin = new Vector2(x0 + pad, 0f);

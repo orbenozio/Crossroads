@@ -15,24 +15,42 @@ namespace Crossroads.UI
         public event Action OnPressed;
 
         private RectTransform _root;
+        [SerializeField] private Sprite menuIcon;   // wired from Theme.menuIcon; null = the built-in three bars
 
         public void SetVisible(bool visible)
         {
             Ensure();
+            ApplyInset();   // keep the button clear of the device notch (no-op in the editor)
             _root.gameObject.SetActive(visible);
+        }
+
+        // Drops the top-corner button below the status bar / notch on device. Re-applied on every
+        // SetVisible so a scene-baked button gets it too.
+        private void ApplyInset()
+        {
+            if (_root == null) return;
+            bool rtl = UIFonts.RightToLeft;
+            // Centre the button vertically on the meter row instead of floating in the very corner: the
+            // meters sit at container y -38 with height 104, so their centre is ~-90 from the top; with the
+            // 64px button pivoted at its top edge that lands at y -58. Shares the same notch inset as the HUD.
+            _root.anchoredPosition = new Vector2(rtl ? 10f : -10f, -58f - SafeArea.TopInset(this));
         }
 
         private void Ensure()
         {
-            if (_root != null) return;
+            if (_root != null) { BuildVisual(); return; }
 
             var found = transform.Find("PauseButton") as RectTransform;
             if (found != null)
             {
                 _root = found;
                 var b0 = found.GetComponent<Button>();
-                b0.onClick.RemoveListener(Fire);   // avoid listener pile-up on the find-existing path
-                b0.onClick.AddListener(Fire);
+                if (b0 != null)
+                {
+                    b0.onClick.RemoveListener(Fire);   // avoid listener pile-up on the find-existing path
+                    b0.onClick.AddListener(Fire);
+                }
+                BuildVisual();
                 return;
             }
 
@@ -45,25 +63,59 @@ namespace Crossroads.UI
             _root.anchorMin = new Vector2(ax, 1f);
             _root.anchorMax = new Vector2(ax, 1f);
             _root.pivot = new Vector2(ax, 1f);
-            _root.sizeDelta = new Vector2(54f, 54f);
-            _root.anchoredPosition = new Vector2(rtl ? 10f : -10f, -10f);
+            _root.sizeDelta = new Vector2(64f, 64f);   // 64 >= 48dp tap target (agent); ApplyInset clears the notch
+            _root.anchoredPosition = new Vector2(rtl ? 10f : -10f, -58f);   // aligned to the meter row (see ApplyInset)
             go.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.12f);
             go.GetComponent<Button>().onClick.AddListener(Fire);
+            BuildVisual();
+        }
 
-            // Three bars (hamburger), centered.
+        // Shows the themed menu icon when one is wired, otherwise the built-in three bars. Re-applied on
+        // every Ensure so a scene-baked button picks up a newly-wired icon and the old bars are hidden.
+        private void BuildVisual()
+        {
+            bool useIcon = menuIcon != null;
+
+            var iconT = _root.Find("Icon") as RectTransform;
+            if (useIcon)
+            {
+                if (iconT == null)
+                {
+                    var go = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+                    iconT = (RectTransform)go.transform;
+                    iconT.SetParent(_root, false);
+                    iconT.anchorMin = new Vector2(0.12f, 0.12f);
+                    iconT.anchorMax = new Vector2(0.88f, 0.88f);
+                    iconT.offsetMin = Vector2.zero; iconT.offsetMax = Vector2.zero;
+                }
+                var img = iconT.GetComponent<Image>();
+                img.sprite = menuIcon; img.preserveAspect = true; img.color = Color.white; img.raycastTarget = false;
+                iconT.gameObject.SetActive(true);
+            }
+            else if (iconT != null)
+            {
+                iconT.gameObject.SetActive(false);
+            }
+
+            // Three bars (hamburger), centered - only when there is no themed icon.
             for (int i = 0; i < 3; i++)
             {
-                var barGo = new GameObject("Bar" + i, typeof(RectTransform), typeof(Image));
-                var rt = (RectTransform)barGo.transform;
-                rt.SetParent(_root, false);
-                rt.anchorMin = new Vector2(0.22f, 0f);
-                rt.anchorMax = new Vector2(0.78f, 0f);
-                rt.pivot = new Vector2(0.5f, 0.5f);
-                rt.sizeDelta = new Vector2(0f, 5f);
-                rt.anchoredPosition = new Vector2(0f, 18f + i * 9f);  // bottom-anchored; rows at 18/27/36
-                var img = barGo.GetComponent<Image>();
-                img.color = new Color(1f, 1f, 1f, 0.85f);
-                img.raycastTarget = false;
+                var bar = _root.Find("Bar" + i) as RectTransform;
+                if (!useIcon && bar == null)
+                {
+                    var barGo = new GameObject("Bar" + i, typeof(RectTransform), typeof(Image));
+                    bar = (RectTransform)barGo.transform;
+                    bar.SetParent(_root, false);
+                    bar.anchorMin = new Vector2(0.22f, 0f);
+                    bar.anchorMax = new Vector2(0.78f, 0f);
+                    bar.pivot = new Vector2(0.5f, 0.5f);
+                    bar.sizeDelta = new Vector2(0f, 5f);
+                    bar.anchoredPosition = new Vector2(0f, 21f + i * 11f);
+                    var img = barGo.GetComponent<Image>();
+                    img.color = new Color(1f, 1f, 1f, 0.85f);
+                    img.raycastTarget = false;
+                }
+                if (bar != null) bar.gameObject.SetActive(!useIcon);
             }
         }
 
