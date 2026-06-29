@@ -1,6 +1,11 @@
 ﻿# Claude / Agents hub - machine-specific junctions, not part of the project
 .claude/
 
+# Agent/dev working artifacts - bridge screenshots and scratch captures, not project source
+.utmp/
+_screens/
+UnityAgentBridge/Screenshots/
+
 # OS / editor
 Thumbs.db
 .DS_Store
