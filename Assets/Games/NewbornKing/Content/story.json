@@ -12,18 +12,32 @@
           "side": "left",
           "label": "Rule with caution",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Seize the moment",
           "effects": [
-            { "resource": "money", "delta": 1 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": 1
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ],
-          "setFlags": { "ambitious": true }
+          "setFlags": {
+            "ambitious": true
+          }
         }
       ]
     },
@@ -36,16 +50,28 @@
           "side": "left",
           "label": "Tend the child yourself",
           "effects": [
-            { "resource": "sleep", "delta": -2 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "sleep",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Let the nurse sleep",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "baby", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "baby",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -55,24 +81,44 @@
       "speaker": "treasurer",
       "body": "The treasurer bows low. 'Majesty, the coffers run thin.'",
       "appearWhen": {
-        "allOf": [ { "resource": "money", "op": "<=", "value": 4 } ]
+        "allOf": [
+          {
+            "resource": "money",
+            "op": "<=",
+            "value": 4
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Raise the taxes",
           "effects": [
-            { "resource": "money", "delta": 2 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": 2
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ],
-          "setFlags": { "taxed": true }
+          "setFlags": {
+            "taxed": true
+          }
         },
         {
           "side": "right",
           "label": "Cut the court feasts",
           "effects": [
-            { "resource": "money", "delta": 1 },
-            { "resource": "baby", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -82,23 +128,41 @@
       "speaker": "nurse",
       "body": "The wet-nurse threatens to leave for a kinder house.",
       "appearWhen": {
-        "allOf": [ { "resource": "baby", "op": "<=", "value": 4 } ]
+        "allOf": [
+          {
+            "resource": "baby",
+            "op": "<=",
+            "value": 4
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Beg her to stay",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "baby", "delta": 2 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "baby",
+              "delta": 2
+            }
           ]
         },
         {
           "side": "right",
           "label": "Dismiss her",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "baby", "delta": -2 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "baby",
+              "delta": -2
+            }
           ]
         }
       ]
@@ -112,18 +176,31 @@
           "side": "left",
           "label": "Befriend him",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "money", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "money",
+              "delta": -1
+            }
           ],
-          "setFlags": { "allied_varic": true }
+          "setFlags": {
+            "allied_varic": true
+          }
         },
         {
           "side": "right",
           "label": "Send him from court",
           "effects": [
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ],
-          "setFlags": { "spurned_varic": true }
+          "setFlags": {
+            "spurned_varic": true
+          }
         }
       ]
     },
@@ -132,23 +209,40 @@
       "speaker": "guard",
       "body": "Varic's men are seen lurking near the nursery after dark.",
       "appearWhen": {
-        "allOf": [ { "flag": "spurned_varic", "is": true } ]
+        "allOf": [
+          {
+            "flag": "spurned_varic",
+            "is": true
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Double the guard",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Dismiss the rumor",
           "effects": [
-            { "resource": "baby", "delta": -2 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "baby",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -158,22 +252,37 @@
       "speaker": "physician",
       "body": "The court physician offers a costly tonic for the heir's health.",
       "appearWhen": {
-        "allOf": [ { "resource": "baby", "op": "<=", "value": 5 } ]
+        "allOf": [
+          {
+            "resource": "baby",
+            "op": "<=",
+            "value": 5
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Pay for the tonic",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "baby", "delta": 2 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": 2
+            }
           ]
         },
         {
           "side": "right",
           "label": "Trust the child's strength",
           "effects": [
-            { "resource": "baby", "delta": -1 }
+            {
+              "resource": "baby",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -183,23 +292,41 @@
       "speaker": "narrator",
       "body": "You have not slept in days. The torchlight blurs and doubles.",
       "appearWhen": {
-        "allOf": [ { "resource": "sleep", "op": "<=", "value": 4 } ]
+        "allOf": [
+          {
+            "resource": "sleep",
+            "op": "<=",
+            "value": 4
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Steal an hour of rest",
           "effects": [
-            { "resource": "sleep", "delta": 2 },
-            { "resource": "money", "delta": -1 }
+            {
+              "resource": "sleep",
+              "delta": 2
+            },
+            {
+              "resource": "money",
+              "delta": -1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Push on without sleep",
           "effects": [
-            { "resource": "sanity", "delta": -2 },
-            { "resource": "sleep", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -2
+            },
+            {
+              "resource": "sleep",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -213,18 +340,35 @@
           "side": "left",
           "label": "Throw it grandly",
           "effects": [
-            { "resource": "money", "delta": -3 },
-            { "resource": "sanity", "delta": 2 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -3
+            },
+            {
+              "resource": "sanity",
+              "delta": 2
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ],
-          "setFlags": { "beloved": true }
+          "setFlags": {
+            "beloved": true
+          }
         },
         {
           "side": "right",
           "label": "Keep it modest",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -234,23 +378,40 @@
       "speaker": "narrator",
       "body": "You wake screaming from a dream of crowns and knives.",
       "appearWhen": {
-        "allOf": [ { "resource": "sanity", "op": "<=", "value": 4 } ]
+        "allOf": [
+          {
+            "resource": "sanity",
+            "op": "<=",
+            "value": 4
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Confide in the priest",
           "effects": [
-            { "resource": "sanity", "delta": 2 },
-            { "resource": "money", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": 2
+            },
+            {
+              "resource": "money",
+              "delta": -1
+            }
           ],
-          "setFlags": { "pious": true }
+          "setFlags": {
+            "pious": true
+          }
         },
         {
           "side": "right",
           "label": "Tell no one",
           "effects": [
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -260,26 +421,47 @@
       "speaker": "general",
       "body": "A general kneels. 'Why crown an infant? The realm would crown YOU.'",
       "appearWhen": {
-        "allOf": [ { "flag": "ambitious", "is": true } ]
+        "allOf": [
+          {
+            "flag": "ambitious",
+            "is": true
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Refuse, stay loyal",
           "effects": [
-            { "resource": "sanity", "delta": 1 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ],
-          "setFlags": { "loyal": true }
+          "setFlags": {
+            "loyal": true
+          }
         },
         {
           "side": "right",
           "label": "Hear him out",
           "effects": [
-            { "resource": "sanity", "delta": -2 },
-            { "resource": "baby", "delta": -2 }
+            {
+              "resource": "sanity",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": -2
+            }
           ],
-          "setFlags": { "usurper": true }
+          "setFlags": {
+            "usurper": true
+          }
         }
       ]
     },
@@ -292,17 +474,32 @@
           "side": "left",
           "label": "Hold him through it",
           "effects": [
-            { "resource": "sleep", "delta": -2 },
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "baby", "delta": 2 }
+            {
+              "resource": "sleep",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "baby",
+              "delta": 2
+            }
           ]
         },
         {
           "side": "right",
           "label": "Hire more nurses",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         }
       ]
@@ -312,24 +509,40 @@
       "speaker": "envoy",
       "body": "The taxed farmers send a bitter envoy to the gates.",
       "appearWhen": {
-        "allOf": [ { "flag": "taxed", "is": true } ]
+        "allOf": [
+          {
+            "flag": "taxed",
+            "is": true
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Lower the tax",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Hold firm",
           "effects": [
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ],
-          "setFlags": { "tyrant": true }
+          "setFlags": {
+            "tyrant": true
+          }
         }
       ]
     },
@@ -342,16 +555,28 @@
           "side": "left",
           "label": "Celebrate quietly",
           "effects": [
-            { "resource": "sanity", "delta": 1 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Proclaim it across the realm",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         }
       ]
@@ -365,17 +590,28 @@
           "side": "left",
           "label": "Present your record humbly",
           "effects": [
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Demand more power",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "money", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "money",
+              "delta": 1
+            }
           ],
-          "setFlags": { "ambitious": true }
+          "setFlags": {
+            "ambitious": true
+          }
         }
       ]
     },
@@ -388,17 +624,31 @@
           "side": "left",
           "label": "Seal the betrothal",
           "effects": [
-            { "resource": "money", "delta": 1 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ],
-          "setFlags": { "betrothed": true }
+          "setFlags": {
+            "betrothed": true
+          }
         },
         {
           "side": "right",
           "label": "Keep the heir free",
           "effects": [
-            { "resource": "sanity", "delta": 1 },
-            { "resource": "money", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            },
+            {
+              "resource": "money",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -412,16 +662,28 @@
           "side": "left",
           "label": "Quarantine the gates",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Let trade flow",
           "effects": [
-            { "resource": "baby", "delta": -2 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "baby",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -435,17 +697,31 @@
           "side": "left",
           "label": "Fund the chapel",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ],
-          "setFlags": { "pious": true }
+          "setFlags": {
+            "pious": true
+          }
         },
         {
           "side": "right",
           "label": "Spend on the keep instead",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "money", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "money",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -459,16 +735,28 @@
           "side": "left",
           "label": "Send out the guard",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sleep", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sleep",
+              "delta": -1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Pay them to leave",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         }
       ]
@@ -482,19 +770,35 @@
           "side": "left",
           "label": "Open the granary",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ],
-          "setFlags": { "beloved": true }
+          "setFlags": {
+            "beloved": true
+          }
         },
         {
           "side": "right",
           "label": "Bar the gates",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "baby", "delta": -1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "baby",
+              "delta": -1
+            }
           ],
-          "setFlags": { "tyrant": true }
+          "setFlags": {
+            "tyrant": true
+          }
         }
       ]
     },
@@ -503,24 +807,41 @@
       "speaker": "varic",
       "body": "A courtier offers to build you a web of spies among the nobles.",
       "appearWhen": {
-        "allOf": [ { "resource": "sanity", "op": "<=", "value": 5 } ]
+        "allOf": [
+          {
+            "resource": "sanity",
+            "op": "<=",
+            "value": 5
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Refuse such methods",
           "effects": [
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Build the network",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ],
-          "setFlags": { "tyrant": true }
+          "setFlags": {
+            "tyrant": true
+          }
         }
       ]
     },
@@ -529,23 +850,41 @@
       "speaker": "council",
       "body": "It is time to choose a tutor for the growing heir.",
       "appearWhen": {
-        "allOf": [ { "resource": "baby", "op": ">=", "value": 5 } ]
+        "allOf": [
+          {
+            "resource": "baby",
+            "op": ">=",
+            "value": 5
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "A gentle scholar",
           "effects": [
-            { "resource": "baby", "delta": 1 },
-            { "resource": "money", "delta": -1 }
+            {
+              "resource": "baby",
+              "delta": 1
+            },
+            {
+              "resource": "money",
+              "delta": -1
+            }
           ]
         },
         {
           "side": "right",
           "label": "A stern master",
           "effects": [
-            { "resource": "baby", "delta": 1 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "baby",
+              "delta": 1
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ]
         }
       ]
@@ -559,16 +898,28 @@
           "side": "left",
           "label": "Ration the grain",
           "effects": [
-            { "resource": "money", "delta": 1 },
-            { "resource": "baby", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": -1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Buy foreign grain",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         }
       ]
@@ -582,16 +933,28 @@
           "side": "left",
           "label": "Slip away to rest",
           "effects": [
-            { "resource": "sleep", "delta": 2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "sleep",
+              "delta": 2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Revel until dawn",
           "effects": [
-            { "resource": "sleep", "delta": -2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "sleep",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         }
       ]
@@ -605,16 +968,28 @@
           "side": "left",
           "label": "Sue for peace",
           "effects": [
-            { "resource": "money", "delta": -2 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -2
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Muster for war",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sleep", "delta": -2 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sleep",
+              "delta": -2
+            }
           ]
         }
       ]
@@ -624,25 +999,44 @@
       "speaker": "council",
       "body": "Whispers spread that the regent means to keep the crown for good.",
       "appearWhen": {
-        "allOf": [ { "flag": "ambitious", "is": true } ]
+        "allOf": [
+          {
+            "flag": "ambitious",
+            "is": true
+          }
+        ]
       },
       "choices": [
         {
           "side": "left",
           "label": "Deny them firmly",
           "effects": [
-            { "resource": "sanity", "delta": 1 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Let them spread",
           "effects": [
-            { "resource": "sanity", "delta": -1 },
-            { "resource": "money", "delta": 1 }
+            {
+              "resource": "sanity",
+              "delta": -1
+            },
+            {
+              "resource": "money",
+              "delta": 1
+            }
           ],
-          "setFlags": { "usurper": true }
+          "setFlags": {
+            "usurper": true
+          }
         }
       ]
     },
@@ -655,16 +1049,28 @@
           "side": "left",
           "label": "Trust her craft",
           "effects": [
-            { "resource": "baby", "delta": 1 },
-            { "resource": "sleep", "delta": -1 }
+            {
+              "resource": "baby",
+              "delta": 1
+            },
+            {
+              "resource": "sleep",
+              "delta": -1
+            }
           ]
         },
         {
           "side": "right",
           "label": "Summon the physician",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "baby", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "baby",
+              "delta": 1
+            }
           ]
         }
       ]
@@ -678,35 +1084,127 @@
           "side": "left",
           "label": "Share with the city",
           "effects": [
-            { "resource": "money", "delta": -1 },
-            { "resource": "sanity", "delta": 1 }
+            {
+              "resource": "money",
+              "delta": -1
+            },
+            {
+              "resource": "sanity",
+              "delta": 1
+            }
           ],
-          "setFlags": { "beloved": true }
+          "setFlags": {
+            "beloved": true
+          }
         },
         {
           "side": "right",
           "label": "Hoard for the court",
           "effects": [
-            { "resource": "money", "delta": 1 },
-            { "resource": "baby", "delta": -1 },
-            { "resource": "sanity", "delta": -1 }
+            {
+              "resource": "money",
+              "delta": 1
+            },
+            {
+              "resource": "baby",
+              "delta": -1
+            },
+            {
+              "resource": "sanity",
+              "delta": -1
+            }
           ]
         }
       ]
     }
   ],
   "endings": [
-    { "when": { "resource": "sleep", "edge": "min" }, "text": "Exhaustion takes you. You collapse on the nursery floor and do not rise." },
-    { "when": { "resource": "sleep", "edge": "max" }, "text": "You retreat to your chambers and sleep while the realm forgets you." },
-    { "when": { "resource": "sanity", "edge": "min" }, "text": "Your mind shatters. At dawn they lead the regent away, raving." },
-    { "when": { "resource": "money", "edge": "min" }, "text": "The treasury runs dry. A court that cannot be paid does not stay loyal." },
-    { "when": { "resource": "baby", "edge": "min" }, "text": "The heir withers under your care. The royal line ends, and so does your regency." },
-    { "when": { "flag": "usurper" }, "text": "When the heir comes of age, the crown is already on your head. They name you king, and the child a footnote." },
-    { "when": { "flag": "tyrant" }, "text": "The heir comes of age into a realm ruled by fear. He inherits your enemies along with your throne." },
-    { "when": { "flag": "allied_varic" }, "text": "Lord Varic stood with you to the end. The heir comes of age, and the two houses rule as one." },
-    { "when": { "flag": "betrothed" }, "text": "The heir comes of age, betrothed to a great house, and inherits a kingdom secured by alliance." },
-    { "when": { "flag": "beloved" }, "text": "The people line the streets as the heir comes of age. They loved the regent, and they love the king." },
-    { "when": { "flag": "pious" }, "text": "Under the church's blessing the heir comes of age, devout and secure upon a steady throne." },
-    { "fallback": true, "text": "The heir grows strong and wise, comes of age, and your regency passes into legend." }
+    {
+      "when": {
+        "resource": "sleep",
+        "edge": "min"
+      },
+      "text": "Exhaustion takes you. You collapse on the nursery floor and do not rise.",
+      "image": "end-collapse"
+    },
+    {
+      "when": {
+        "resource": "sleep",
+        "edge": "max"
+      },
+      "text": "You retreat to your chambers and sleep while the realm forgets you.",
+      "image": "end-withdraw"
+    },
+    {
+      "when": {
+        "resource": "sanity",
+        "edge": "min"
+      },
+      "text": "Your mind shatters. At dawn they lead the regent away, raving.",
+      "image": "end-madness"
+    },
+    {
+      "when": {
+        "resource": "money",
+        "edge": "min"
+      },
+      "text": "The treasury runs dry. A court that cannot be paid does not stay loyal.",
+      "image": "end-bankrupt"
+    },
+    {
+      "when": {
+        "resource": "baby",
+        "edge": "min"
+      },
+      "text": "The heir withers under your care. The royal line ends, and so does your regency.",
+      "image": "end-heir"
+    },
+    {
+      "when": {
+        "flag": "usurper"
+      },
+      "text": "When the heir comes of age, the crown is already on your head. They name you king, and the child a footnote.",
+      "image": "end-usurper"
+    },
+    {
+      "when": {
+        "flag": "tyrant"
+      },
+      "text": "The heir comes of age into a realm ruled by fear. He inherits your enemies along with your throne.",
+      "image": "end-tyrant"
+    },
+    {
+      "when": {
+        "flag": "allied_varic"
+      },
+      "text": "Lord Varic stood with you to the end. The heir comes of age, and the two houses rule as one.",
+      "image": "end-allied"
+    },
+    {
+      "when": {
+        "flag": "betrothed"
+      },
+      "text": "The heir comes of age, betrothed to a great house, and inherits a kingdom secured by alliance.",
+      "image": "end-betrothed"
+    },
+    {
+      "when": {
+        "flag": "beloved"
+      },
+      "text": "The people line the streets as the heir comes of age. They loved the regent, and they love the king.",
+      "image": "end-beloved"
+    },
+    {
+      "when": {
+        "flag": "pious"
+      },
+      "text": "Under the church's blessing the heir comes of age, devout and secure upon a steady throne.",
+      "image": "end-pious"
+    },
+    {
+      "fallback": true,
+      "text": "The heir grows strong and wise, comes of age, and your regency passes into legend.",
+      "image": "end-legend"
+    }
   ]
 }

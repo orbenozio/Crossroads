@@ -92,21 +92,23 @@ namespace Crossroads.UI
 
         private static Ending ParseEnding(JObject o)
         {
+            string image = (string)o["image"];   // optional per-ending backdrop key (all ending shapes)
             if ((bool?)o["fallback"] == true)
-                return new Ending { Fallback = true, Text = (string)o["text"] };
+                return new Ending { Fallback = true, Text = (string)o["text"], Image = image };
             var when = (JObject)o["when"];
             // ניצחון-מסע (R6): when:{reachedGoal:true} - overlay שאינו משנה את סכמת Reigns.
             if ((bool?)when?["reachedGoal"] == true)
-                return new Ending { ReachedGoal = true, Text = (string)o["text"] };
+                return new Ending { ReachedGoal = true, Text = (string)o["text"], Image = image };
             // Branching survival ending: when:{flag:"x", is:true} - chosen at MaxTurns by flag state.
             if (when?["flag"] != null)
-                return new Ending { Flag = (string)when["flag"], FlagIs = (bool?)when["is"] ?? true, Text = (string)o["text"] };
+                return new Ending { Flag = (string)when["flag"], FlagIs = (bool?)when["is"] ?? true, Text = (string)o["text"], Image = image };
             return new Ending
             {
                 Fallback = false,
                 ResourceId = (string)when?["resource"],
                 Edge = ParseEdge((string)when?["edge"]),
-                Text = (string)o["text"]
+                Text = (string)o["text"],
+                Image = image
             };
         }
 

@@ -59,6 +59,8 @@ namespace Crossroads.Engine
     {
         public readonly GameOverReason Reason;
         public readonly string Text;
-        public GameOverInfo(GameOverReason reason, string text) { Reason = reason; Text = text; }
+        public readonly string Image;   // optional per-ending backdrop key (from the matched Ending; null = default key-art)
+        public GameOverInfo(GameOverReason reason, string text) : this(reason, text, null) { }
+        public GameOverInfo(GameOverReason reason, string text, string image) { Reason = reason; Text = text; Image = image; }
     }
 }

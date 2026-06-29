@@ -122,7 +122,7 @@ namespace Crossroads.Engine
             if (brokenResource != null)
             {
                 _status = GameStatus.GameOver;
-                _lastGameOver = new GameOverInfo(GameOverReason.ResourceBroken, EndingText(brokenResource, brokenEdge));
+                _lastGameOver = Over(GameOverReason.ResourceBroken, FindResourceEnding(brokenResource, brokenEdge));
             }
 
             var result = new ResolveResult(applied, _status);
@@ -181,24 +181,33 @@ namespace Crossroads.Engine
             if (_source is IGoalAwareSource g && g.IsAtGoal(_state))
             {
                 _status = GameStatus.GameOver;
-                _lastGameOver = new GameOverInfo(GameOverReason.ReachedGoal, GoalEndingText());
+                _lastGameOver = Over(GameOverReason.ReachedGoal, FindGoalEnding());
                 OnGameOver?.Invoke(_lastGameOver);
                 return true;
             }
             return false;
         }
 
-        private string GoalEndingText()
+        // Builds the GameOverInfo from the matched ending, carrying its text + optional backdrop image.
+        // Falls back to the fallback ending (and a game-agnostic last-resort string) when none matched.
+        private GameOverInfo Over(GameOverReason reason, Ending e)
+        {
+            if (e == null) e = FindFallbackEnding();
+            string text = e?.Text ?? "The story has reached its end.";
+            return new GameOverInfo(reason, text, e?.Image);
+        }
+
+        private Ending FindGoalEnding()
         {
             foreach (var e in _story.Endings)
-                if (e.ReachedGoal) return e.Text;
-            return "You reached your destination.";
+                if (e.ReachedGoal) return e;
+            return null;
         }
 
         private void EndNoMoreEvents()
         {
             _status = GameStatus.GameOver;
-            _lastGameOver = new GameOverInfo(GameOverReason.NoMoreEvents, FallbackEndingText());
+            _lastGameOver = Over(GameOverReason.NoMoreEvents, FindFallbackEnding());
             OnGameOver?.Invoke(_lastGameOver);
         }
 
@@ -208,33 +217,33 @@ namespace Crossroads.Engine
         private void EndSurvived()
         {
             _status = GameStatus.GameOver;
-            _lastGameOver = new GameOverInfo(GameOverReason.Survived, SurvivalEndingText());
+            _lastGameOver = Over(GameOverReason.Survived, FindSurvivalEnding());
             OnGameOver?.Invoke(_lastGameOver);
         }
 
-        private string SurvivalEndingText()
+        private Ending FindSurvivalEnding()
         {
             foreach (var e in _story.Endings)
                 if (!e.Fallback && !e.ReachedGoal && e.Flag != null && _state.GetFlag(e.Flag) == e.FlagIs)
-                    return e.Text;
-            return FallbackEndingText();
+                    return e;
+            return FindFallbackEnding();
         }
 
-        private string EndingText(string resourceId, ResourceEdge edge)
+        private Ending FindResourceEnding(string resourceId, ResourceEdge edge)
         {
             foreach (var e in _story.Endings)
                 if (!e.Fallback && e.ResourceId == resourceId && e.Edge == edge)
-                    return e.Text;
-            return FallbackEndingText();
+                    return e;
+            return FindFallbackEnding();
         }
 
-        private string FallbackEndingText()
+        // last-resort אגנוסטי-משחק - הקוראים נופלים לכאן כשאין ending ספציפי; null אם התוכן לא הגדיר
+        // fallback (ה-StoryValidator מתריע על כך), ואז Over משתמש במחרוזת ניטרלית לא-תלוית-משחק.
+        private Ending FindFallbackEnding()
         {
             foreach (var e in _story.Endings)
-                if (e.Fallback) return e.Text;
-            // last-resort אגנוסטי-משחק - מגיעים לכאן רק אם התוכן לא הגדיר ending fallback
-            // (ה-StoryValidator מתריע על כך). מחרוזת ניטרלית, לא תלוית-שפה של משחק מסוים.
-            return "The story has reached its end.";
+                if (e.Fallback) return e;
+            return null;
         }
     }
 }

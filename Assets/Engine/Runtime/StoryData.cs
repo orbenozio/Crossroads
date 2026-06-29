@@ -41,5 +41,6 @@ namespace Crossroads.Engine
         public string Flag;           // when:{flag:"x"} - branching survival ending, chosen at MaxTurns by flag state
         public bool FlagIs = true;
         public string Text;
+        public string Image;          // optional per-ending backdrop key, resolved to a Sprite by Theme.GetEndingArt (null = the default key-art)
     }
 }

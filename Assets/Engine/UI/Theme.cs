@@ -22,7 +22,9 @@ namespace Crossroads.UI
         public Sprite logo;        // optional title wordmark shown in place of the menu title text
         public Sprite cardArt;     // optional card background art; null = flat card color
         public Sprite meterFrame;  // optional decorative frame drawn behind each meter icon
+        public Sprite speakerFrame; // optional ornate circular medallion frame around the speaker portrait; null = a plain procedural ring
         public Sprite buttonSprite; // optional 9-sliced button plate; null = flat colored buttons
+        public Sprite menuIcon;    // optional icon for the pause/menu button; null = the built-in three bars
 
         [Header("Audio")]
         public AudioClip music;     // looping gameplay track
@@ -39,6 +41,7 @@ namespace Crossroads.UI
         [Header("Overrides")]
         public List<ResourceLabel> resourceLabels = new List<ResourceLabel>();
         public List<SpeakerStyle> speakers = new List<SpeakerStyle>();
+        public List<EndingArt> endingArt = new List<EndingArt>();   // per-ending backdrop, keyed by the story ending's image key
 
         // Theme override > ResourceDef default (ספק 14.2). null = אין override.
         public string GetResourceLabelOverride(string resourceId)
@@ -63,6 +66,15 @@ namespace Crossroads.UI
             return null;
         }
 
+        // Per-ending backdrop art (J8 - lives in the theme). null = fall back to keyArt.
+        public Sprite GetEndingArt(string key)
+        {
+            if (string.IsNullOrEmpty(key)) return null;
+            foreach (var e in endingArt)
+                if (e.key == key && e.art != null) return e.art;
+            return null;
+        }
+
         [System.Serializable]
         public sealed class ResourceLabel
         {
@@ -77,6 +89,13 @@ namespace Crossroads.UI
             public string id;
             public Color tint = Color.white;
             public Sprite icon;
+        }
+
+        [System.Serializable]
+        public sealed class EndingArt
+        {
+            public string key;    // matches the story ending's "image" key
+            public Sprite art;
         }
     }
 }
