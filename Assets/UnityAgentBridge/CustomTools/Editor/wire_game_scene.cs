@@ -50,16 +50,20 @@ namespace UnityAgentBridge.Editor.CustomTools
             var body = EnsureTmpBody(card);
             // Bands: portrait + speaker name at the top, choice hints at the bottom, body in the middle.
             var bodyRt = (RectTransform)body.transform;
-            bodyRt.anchorMin = new Vector2(0.08f, 0.16f); bodyRt.anchorMax = new Vector2(0.92f, 0.64f);
+            bodyRt.anchorMin = new Vector2(0.14f, 0.16f); bodyRt.anchorMax = new Vector2(0.86f, 0.55f);
             bodyRt.offsetMin = Vector2.zero; bodyRt.offsetMax = Vector2.zero;
-            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.30f, 0.715f), new Vector2(0.70f, 0.985f));
-            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.08f, 0.655f), new Vector2(0.92f, 0.71f), 26, TextAlignmentOptions.Center);
+            // Speaker portrait + name pulled well inside the card's gold frame (sides + top), name/body
+            // shifted down so nothing sits over the border art (device feedback).
+            var speakerIcon = MakeCardImage(card, "SpeakerIcon", new Vector2(0.26f, 0.60f), new Vector2(0.74f, 0.86f));
+            var speaker = MakeCardLabel(card, "Speaker", new Vector2(0.14f, 0.535f), new Vector2(0.86f, 0.585f), 26, TextAlignmentOptions.Center);
             // Raised off the bottom border into the card's dark center, each on a subtle dark plate so
             // the hint text does not get lost in the ornate card art.
-            MakeCardPlate(card, "ChoiceLeftBg", new Vector2(0.05f, 0.085f), new Vector2(0.48f, 0.20f));
-            MakeCardPlate(card, "ChoiceRightBg", new Vector2(0.52f, 0.085f), new Vector2(0.95f, 0.20f));
-            var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.07f, 0.09f), new Vector2(0.47f, 0.195f), 30, TextAlignmentOptions.Left);
-            var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.53f, 0.09f), new Vector2(0.93f, 0.195f), 30, TextAlignmentOptions.Right);
+            // Raised off the bottom border and pulled in from the side borders so the hints sit inside the
+            // navy panel, not over the gold frame. Centered + wrapped so long labels never clip (device).
+            MakeCardPlate(card, "ChoiceLeftBg", new Vector2(0.14f, 0.135f), new Vector2(0.49f, 0.245f));
+            MakeCardPlate(card, "ChoiceRightBg", new Vector2(0.51f, 0.135f), new Vector2(0.86f, 0.245f));
+            var choiceLeft = MakeCardLabel(card, "ChoiceLeft", new Vector2(0.15f, 0.14f), new Vector2(0.48f, 0.24f), 30, TextAlignmentOptions.Center);
+            var choiceRight = MakeCardLabel(card, "ChoiceRight", new Vector2(0.52f, 0.14f), new Vector2(0.85f, 0.24f), 30, TextAlignmentOptions.Center);
 
             // CardView on Card, wired to the TMP body + portrait + speaker/choice labels + the card Image.
             var cardView = card.GetComponent<CardView>() ?? card.AddComponent<CardView>();
@@ -78,6 +82,12 @@ namespace UnityAgentBridge.Editor.CustomTools
             var overlay = canvas.GetComponent<MessageOverlay>() ?? canvas.AddComponent<MessageOverlay>();
             var menu = canvas.GetComponent<MenuOverlay>() ?? canvas.AddComponent<MenuOverlay>();
             var pause = canvas.GetComponent<PauseButton>() ?? canvas.AddComponent<PauseButton>();
+            {
+                // Always assign (incl. null) so re-wiring a theme without a menu icon clears the old one (review).
+                var pauseSo = new SerializedObject(pause);
+                pauseSo.FindProperty("menuIcon").objectReferenceValue = theme != null ? theme.menuIcon : null;
+                pauseSo.ApplyModifiedProperties();
+            }
             var audioDir = canvas.GetComponent<AudioDirector>() ?? canvas.AddComponent<AudioDirector>();
 
             // Game object + the concrete bootstrap (by type), fully wired.
@@ -229,7 +239,7 @@ namespace UnityAgentBridge.Editor.CustomTools
             rt.anchorMin = aMin; rt.anchorMax = aMax;
             rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
             var img = go.GetComponent<Image>();
-            img.color = new Color(0f, 0f, 0f, 0.5f);
+            img.color = new Color(0f, 0f, 0f, 0.65f);   // darker plate so the gold choice hint reads (agent)
             img.raycastTarget = false;
             return img;
         }
@@ -247,7 +257,7 @@ namespace UnityAgentBridge.Editor.CustomTools
             var t = go.GetComponent<TextMeshProUGUI>();
             t.fontSize = size; t.alignment = align;
             t.color = Color.white; t.raycastTarget = false;
-            t.enableWordWrapping = false;
+            t.enableWordWrapping = true;   // long choice labels wrap instead of clipping at the frame (device)
             UIFonts.Apply(t);
             return t;
         }
@@ -266,10 +276,12 @@ namespace UnityAgentBridge.Editor.CustomTools
                 rt.anchorMin = new Vector2(0.08f, 0.1f); rt.anchorMax = new Vector2(0.92f, 0.9f);
                 rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
                 body = go.GetComponent<TextMeshProUGUI>();
-                body.fontSize = 34; body.alignment = TextAlignmentOptions.Center;
-                body.color = Color.white; body.raycastTarget = false;
+                body.raycastTarget = false;   // size / alignment / color are set once below (covers baked bodies too)
             }
             UIFonts.Apply(body);
+            body.fontSize = 42;   // larger body text for mobile, applied to baked bodies too (agent)
+            body.alignment = TextAlignmentOptions.Center;
+            body.color = Color.white;
             return body;
         }
 
