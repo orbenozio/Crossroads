@@ -29,8 +29,11 @@ namespace UnityAgentBridge.Editor.CustomTools
             {
                 // A valid package id + a friendly launcher label (the app the user installs is the game).
                 // Set unconditionally so the real id wins over Unity's non-empty com.DefaultCompany.* default.
+                PlayerSettings.companyName = "Crossroads";
                 PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.crossroads.newbornking");
                 PlayerSettings.productName = "Newborn King";
+                if (string.IsNullOrEmpty(PlayerSettings.bundleVersion) || PlayerSettings.bundleVersion == "0.1")
+                    PlayerSettings.bundleVersion = "0.1.0";   // shown on the Settings screen (Application.version)
 
                 // Reload the scene from disk so transient edit-mode preview staging (SwipeHint, staged
                 // menu/end panels) is discarded and never baked into the build. Dirtiness was already

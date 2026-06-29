@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: Crossroads
   productName: Newborn King
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -22,7 +22,7 @@ PlayerSettings:
   m_SplashScreenOverlayOpacity: 1
   m_SplashScreenAnimation: 0
   m_SplashScreenLogoStyle: 1
-  m_SplashScreenDrawMode: 0
+  m_SplashScreenDrawMode: 1
   m_SplashScreenBackgroundAnimationZoom: 1
   m_SplashScreenLogoAnimationZoom: 1
   m_SplashScreenBackgroundLandscapeAspect: 1
@@ -38,8 +38,10 @@ PlayerSettings:
     x: 0
     y: 0
     width: 1
-    height: 1
-  m_SplashScreenLogos: []
+    height: 0.99999994
+  m_SplashScreenLogos:
+  - logo: {fileID: 21300000, guid: ff5afc58b750da64e8e45e9fb36716e7, type: 3}
+    duration: 3
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
   defaultScreenWidth: 540
@@ -675,8 +677,8 @@ PlayerSettings:
   ps4IncludedModules: []
   ps4attribVROutputEnabled: 0
   monoEnv: 
-  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: 7c93a07b35521fb4daa4c07d9df1dbae, type: 3}
-  splashScreenBackgroundSourcePortrait: {fileID: 21300000, guid: 7c93a07b35521fb4daa4c07d9df1dbae, type: 3}
+  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: 13cb4f190d8ae8742bda0b0d06d20a21, type: 3}
+  splashScreenBackgroundSourcePortrait: {fileID: 21300000, guid: 13cb4f190d8ae8742bda0b0d06d20a21, type: 3}
   blurSplashScreenBackground: 0
   spritePackerPolicy: 
   webGLMemorySize: 32
