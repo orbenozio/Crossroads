@@ -32,8 +32,10 @@ namespace Crossroads.Engine.Tests
 
                 Assert.IsTrue(menu.IsShown);
                 Assert.AreEqual("Title", go.transform.Find("MenuOverlay/Title").GetComponent<TMP_Text>().text);
-                Assert.AreEqual("[1] Continue", Label(go, 0), "buttons carry a number-key prefix for accessibility");
-                Assert.AreEqual("[2] Quit", Label(go, 1));
+                // Labels are upper-cased to match the end-screen buttons (one button family), keeping the
+                // number-key prefix for accessibility.
+                Assert.AreEqual("[1] CONTINUE", Label(go, 0), "buttons carry a number-key prefix for accessibility");
+                Assert.AreEqual("[2] QUIT", Label(go, 1));
 
                 Btn(go, 0).onClick.Invoke();
                 Assert.IsTrue(aClicked, "clicking a button runs its action");

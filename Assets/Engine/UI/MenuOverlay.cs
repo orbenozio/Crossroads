@@ -130,12 +130,21 @@ namespace Crossroads.UI
             lblRt.offsetMin = Vector2.zero; lblRt.offsetMax = Vector2.zero;
             var lbl = lblGo.GetComponent<TextMeshProUGUI>();
             UIFonts.Apply(lbl);
-            lbl.fontSize = 30;
             lbl.alignment = TextAlignmentOptions.Center;
-            lbl.color = Color.white;
+            // Warm bronze-gold caps on the dark plate, matching the end-screen buttons; the primary a shade
+            // brighter so it leads. The accent lives in the text, the plaque stays dark for contrast.
+            Color accent = _theme != null ? _theme.accent : new Color(0.62f, 0.50f, 0.28f);
+            lbl.color = item.Primary
+                ? new Color(Mathf.Clamp01(accent.r + 0.35f), Mathf.Clamp01(accent.g + 0.35f), Mathf.Clamp01(accent.b + 0.35f), 1f)
+                : new Color(1f, 0.86f, 0.55f);
+            lbl.fontStyle = FontStyles.Bold;
+            lbl.characterSpacing = 4f;   // spaced caps read as carved/regal, matching the end screen + nameplate
             lbl.raycastTarget = false;
-            // "[N] Label" - number key 1-9 picks it (accessibility parity with the map).
-            lbl.text = count > 1 ? "[" + (index + 1) + "] " + item.Label : item.Label;
+            // "[N] Label" - number key 1-9 picks it. The prefix is a keyboard affordance, so hide it on
+            // touch platforms (no keyboard); the number-key handler still works where a keyboard exists.
+            bool showKey = count > 1 && !Application.isMobilePlatform;
+            lbl.text = (showKey ? "[" + (index + 1) + "] " + item.Label : item.Label).ToUpperInvariant();
+            lbl.fontSize = 34;   // larger menu button label (agent)
         }
 
         private void Invoke(int index)
@@ -191,7 +200,9 @@ namespace Crossroads.UI
             _scrim = scrimGo;
 
             _title = MakeText("Title", new Vector2(0.08f, 0.70f), new Vector2(0.92f, 0.88f), 60, FontStyles.Bold);
-            _body = MakeText("Body", new Vector2(0.12f, 0.54f), new Vector2(0.88f, 0.68f), 28, FontStyles.Normal);
+            // The intro line is the heart of the story - bigger, italic, warm gold so it draws the eye (device feedback).
+            _body = MakeText("Body", new Vector2(0.10f, 0.50f), new Vector2(0.90f, 0.655f), 40, FontStyles.Italic);
+            _body.color = new Color(0.96f, 0.91f, 0.74f);
 
             // Optional title wordmark (Theme.logo), over the title region; shown instead of the title text.
             var logoGo = new GameObject("Logo", typeof(RectTransform), typeof(Image));
@@ -255,32 +266,32 @@ namespace Crossroads.UI
         private static Color AccentOf(Theme t) => t != null ? t.accent : new Color(0.30f, 0.55f, 0.95f, 1f);
         private static Color SecondaryOf(Theme t) => t != null ? t.card : new Color(0.28f, 0.28f, 0.33f, 1f);
 
-        // Sets a button's look: a 9-sliced plate sprite when the theme has one (grayscale tint states so
-        // the art shows true), else a flat accent/secondary color. Shared so the end screen matches.
+        // Sets a button's look: the engraved stone plaque (dark fill + bronze edge), the SAME material as
+        // the end-screen buttons, so the pause/main menus read as one family. The gold accent lives in the
+        // bold label, not a busy plate. ColorTint then drives idle/hover/pressed/selected feedback. Shared
+        // with the end screen so every button in the game looks and reacts the same.
         internal static void ConfigureButtonVisual(Image img, Button btn, Theme theme, bool primary)
         {
-            if (theme != null && theme.buttonSprite != null)
-            {
-                img.sprite = theme.buttonSprite;
-                // The plate's aspect (~3:1) matches the button, so Simple stretches cleanly; Sliced would
-                // collapse since the ornate end-caps are wider than a single button.
-                img.type = Image.Type.Simple;
-                ApplyButtonStates(btn, primary ? new Color(1f, 0.97f, 0.9f) : new Color(0.82f, 0.82f, 0.86f));
-            }
-            else
-            {
-                ApplyButtonStates(btn, primary ? AccentOf(theme) : SecondaryOf(theme));
-            }
+            img.sprite = PanelShapes.Plaque;
+            img.type = Image.Type.Sliced;   // 9-sliced so the bronze edge stays crisp at any button size
+            img.color = Color.white;        // the plaque sprite carries its own dark fill + bronze edge
+            // Bases sit below white so the bronze edge has headroom to brighten on hover and darken on press.
+            ApplyButtonStates(btn, primary
+                ? new Color(0.88f, 0.84f, 0.76f, 1f)    // primary leads (brighter bronze edge)
+                : new Color(0.70f, 0.67f, 0.62f, 1f));  // secondary recedes
         }
 
-        // Configures a button's idle / hover / pressed / disabled colors (ColorTint transition).
+        // Configures a button's idle / hover / pressed / selected / disabled colors (ColorTint transition).
+        // The shifts are deliberately pronounced so the feedback is unmistakable: hover lifts the plate
+        // (desktop/gamepad - absent on touch, but kept anyway), pressed/clicked visibly darkens it, and the
+        // selected (keyboard/gamepad focus) state gives a subtle lift.
         internal static void ApplyButtonStates(Button b, Color baseColor)
         {
             var cb = b.colors;
             cb.normalColor = baseColor;
-            cb.highlightedColor = Shift(baseColor, 0.14f);
-            cb.pressedColor = Shift(baseColor, -0.16f);
-            cb.selectedColor = Shift(baseColor, 0.08f);
+            cb.highlightedColor = Shift(baseColor, 0.16f);    // hover
+            cb.pressedColor = Shift(baseColor, -0.24f);       // pressed / clicked
+            cb.selectedColor = Shift(baseColor, 0.09f);       // selected (focus)
             cb.disabledColor = new Color(0.3f, 0.3f, 0.34f, 0.5f);
             cb.colorMultiplier = 1f;
             cb.fadeDuration = 0.08f;
