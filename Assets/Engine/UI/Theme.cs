@@ -25,6 +25,7 @@ namespace Crossroads.UI
         public Sprite speakerFrame; // optional ornate circular medallion frame around the speaker portrait; null = a plain procedural ring
         public Sprite buttonSprite; // optional 9-sliced button plate; null = flat colored buttons
         public Sprite menuIcon;    // optional icon for the pause/menu button; null = the built-in three bars
+        public Sprite loadingArt;  // optional full-bleed poster for the branded loading screen; null = fall back to keyArt
 
         [Header("Audio")]
         public AudioClip music;     // looping gameplay track

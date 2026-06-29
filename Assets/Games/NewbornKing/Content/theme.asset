@@ -25,6 +25,7 @@ MonoBehaviour:
   speakerFrame: {fileID: 21300000, guid: c1d2e3f405162738495a6b7c8d9e0f11, type: 3}
   buttonSprite: {fileID: 21300000, guid: f2f94610bbc96c44f84d2d24ce5f5dcb, type: 3}
   menuIcon: {fileID: 21300000, guid: 4932847a1dd4ed14aacec9e82f4fa6f2, type: 3}
+  loadingArt: {fileID: 21300000, guid: 7c93a07b35521fb4daa4c07d9df1dbae, type: 3}
   music: {fileID: 8300000, guid: 3da5973f93eb0df4fa023b4942bdbb3c, type: 3}
   musicMenu: {fileID: 8300000, guid: 441fdabd9067f3242891155c3920aa31, type: 3}
   swipeSfx: {fileID: 8300000, guid: df212c52ec69c454d8e934921ab27f7d, type: 3}

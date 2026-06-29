@@ -12,10 +12,10 @@ namespace UnityAgentBridge.Editor.CustomTools
     // tries to hide the Made-with-Unity logo (only possible on a Pro/Plus license; reported back).
     public static class set_splash
     {
-        [McpTool("set_splash", "Set the Unity splash to a full title image. path = image asset path; removeLogos clears the separate logo overlay; showUnityLogo=false needs Unity Pro/Plus.")]
-        public static object Invoke(string path = "", bool removeLogos = true, bool showUnityLogo = false)
+        [McpTool("set_splash", "Set the Unity splash to a full title image. path = image asset path; removeLogos clears the separate logo overlay; showUnityLogo=false needs Unity Pro/Plus; seconds>0 holds the background that long via an invisible timing logo.")]
+        public static object Invoke(string path = "", bool removeLogos = true, bool showUnityLogo = false, float seconds = 0f)
         {
-            if (string.IsNullOrEmpty(path)) throw new Exception("path is required (e.g. Assets/Games/NewbornKing/Art/splash.png)");
+            if (string.IsNullOrEmpty(path)) throw new Exception("path is required (e.g. Assets/Engine/UI/Branding/crossroads-logo.png)");
 
             var imp = AssetImporter.GetAtPath(path) as TextureImporter;
             if (imp == null) throw new Exception("not a texture asset: " + path);
@@ -51,6 +51,30 @@ namespace UnityAgentBridge.Editor.CustomTools
 
             if (removeLogos)
                 PlayerSettings.SplashScreen.logos = new PlayerSettings.SplashScreenLogo[0];
+
+            // With no logos the background flashes for well under a second. Hold it on screen by adding a
+            // single invisible (fully transparent) logo whose duration sets how long the splash shows.
+            if (seconds > 0f)
+            {
+                const string holdPath = "Assets/Engine/UI/Branding/splash-hold.png";
+                var holdImp = AssetImporter.GetAtPath(holdPath) as TextureImporter;
+                if (holdImp != null)
+                {
+                    if (holdImp.textureType != TextureImporterType.Sprite || holdImp.spriteImportMode != SpriteImportMode.Single)
+                    {
+                        holdImp.textureType = TextureImporterType.Sprite;
+                        holdImp.spriteImportMode = SpriteImportMode.Single;
+                        holdImp.SaveAndReimport();
+                    }
+                    AssetDatabase.ImportAsset(holdPath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                    var holdSprite = AssetDatabase.LoadAssetAtPath<Sprite>(holdPath);
+                    if (holdSprite != null)
+                    {
+                        float dur = Mathf.Max(2f, seconds);   // Unity enforces a 2s minimum per logo
+                        PlayerSettings.SplashScreen.logos = new[] { PlayerSettings.SplashScreenLogo.Create(dur, holdSprite) };
+                    }
+                }
+            }
 
             bool unityLogoApplied = true;
             try { PlayerSettings.SplashScreen.showUnityLogo = showUnityLogo; }

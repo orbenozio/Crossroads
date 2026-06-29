@@ -26,10 +26,12 @@ namespace Crossroads.Game.NewbornKing
         [SerializeField] private MenuOverlay menu;                // main menu + pause + confirm (spec 9.5)
         [SerializeField] private PauseButton pauseButton;         // pointer affordance to open the pause menu
         [SerializeField] private AudioDirector audioDirector;     // looping music + swipe SFX (clips from the theme)
+        [SerializeField] private LoadingScreen loadingScreen;     // branded startup loading reveal (optional)
 
         [Header("Title / menu text")]
         [SerializeField] private string title = "Crossroads";
         [SerializeField] [TextArea] private string intro = "A short story of choices. Swipe left or right to decide.";
+        [SerializeField] private string loadingCaption = "";      // optional flavor line on the loading screen
 
         private EventEngine _engine;
         private StoryData _story;
@@ -70,7 +72,14 @@ namespace Crossroads.Game.NewbornKing
             if (pauseButton != null) pauseButton.OnPressed += OpenPause;
             if (audioDirector != null && theme != null) audioDirector.ConfigureUiClick(theme.clickSfx);
 
-            ShowMainMenu();
+            // Branded loading reveal first (if wired), then the title screen. No loading screen = straight in.
+            if (loadingScreen != null)
+            {
+                loadingScreen.SetTheme(theme);
+                loadingScreen.SetCaption(loadingCaption);
+                loadingScreen.Run(ShowMainMenu);
+            }
+            else ShowMainMenu();
         }
 
         // Title screen (spec 9.5). Continue resumes a valid save; New Game starts fresh (confirming an
@@ -88,6 +97,7 @@ namespace Crossroads.Game.NewbornKing
             var items = new List<MenuOverlay.MenuItem>();
             if (hasSave) items.Add(new MenuOverlay.MenuItem("Continue", ContinueRun, true));
             items.Add(new MenuOverlay.MenuItem("New Game", hasSave ? (Action)ConfirmNewGame : StartRun, !hasSave));
+            items.Add(new MenuOverlay.MenuItem("Settings", () => ShowSettings(ShowMainMenu)));
             items.Add(new MenuOverlay.MenuItem("Quit", QuitApp));
             if (audioDirector != null && theme != null)
                 audioDirector.PlayMusic(theme.musicMenu != null ? theme.musicMenu : theme.music);   // menu track
@@ -158,11 +168,58 @@ namespace Crossroads.Game.NewbornKing
             {
                 new MenuOverlay.MenuItem("Resume", null, true),   // Invoke() hides the menu; that is the resume
                 new MenuOverlay.MenuItem("Restart", StartRun),
+                new MenuOverlay.MenuItem("Settings", () => ShowSettings(OpenPause)),
                 new MenuOverlay.MenuItem("Main Menu", ShowMainMenu)
             });
         }
 
-        private void QuitApp() => Application.Quit();   // no-op in the editor, harmless
+        // Settings sub-menu (spec 9.5): music + sound toggles (persisted in PlayerPrefs via AudioDirector),
+        // plus the version + anonymous player id for support / future log correlation. Toggle buttons flip
+        // the flag and re-show this screen with the updated label; Back returns to the caller's menu.
+        private void ShowSettings(Action back)
+        {
+            if (menu == null) { back?.Invoke(); return; }
+            bool music = audioDirector == null || audioDirector.MusicEnabled;
+            bool sfx = audioDirector == null || audioDirector.SfxEnabled;
+            string info = "Version " + Application.version + "      Player " + PlayerId.Short;
+            menu.Show("Settings", info, new[]
+            {
+                new MenuOverlay.MenuItem("Music: " + (music ? "On" : "Off"),
+                    () => { audioDirector?.SetMusicEnabled(!music); ShowSettings(back); }, true),
+                new MenuOverlay.MenuItem("Sound: " + (sfx ? "On" : "Off"),
+                    () => { audioDirector?.SetSfxEnabled(!sfx); ShowSettings(back); }),
+                new MenuOverlay.MenuItem("Back", back)
+            });
+        }
+
+        // Anonymous, stable per-install player id (for support / future log correlation). Created once and
+        // kept in PlayerPrefs; never tied to any personal data.
+        private static class PlayerId
+        {
+            private const string Key = "cr.player.id";
+            public static string Full
+            {
+                get
+                {
+                    string id = PlayerPrefs.GetString(Key, "");
+                    if (string.IsNullOrEmpty(id))
+                    {
+                        id = System.Guid.NewGuid().ToString("N");
+                        PlayerPrefs.SetString(Key, id); PlayerPrefs.Save();
+                    }
+                    return id;
+                }
+            }
+            public static string Short => Full.Substring(0, 8);
+        }
+
+        private void QuitApp()
+        {
+            // Cover the screen first so hiding the menu never flashes the bare card for the frame(s)
+            // before the process actually exits.
+            if (loadingScreen != null) loadingScreen.ShowBlackout();
+            Application.Quit();   // no-op in the editor, harmless
+        }
 
         private bool MenuBlocking => menu != null && menu.IsShown;
 

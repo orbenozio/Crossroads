@@ -4795,6 +4795,7 @@ GameObject:
   - component: {fileID: 1543597505}
   - component: {fileID: 1543597504}
   - component: {fileID: 1543597506}
+  - component: {fileID: 1543597507}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -4976,6 +4977,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37f7727a53e4ee4d9c249ee6d5df20f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Crossroads.UI::Crossroads.UI.AudioDirector
+--- !u!114 &1543597507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1543597495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e8ef0e0388e93544856d6fc482f17bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Crossroads.UI::Crossroads.UI.LoadingScreen
 --- !u!1 &1639854946
 GameObject:
   m_ObjectHideFlags: 0
@@ -5874,8 +5887,10 @@ MonoBehaviour:
   menu: {fileID: 1543597505}
   pauseButton: {fileID: 1543597504}
   audioDirector: {fileID: 1543597506}
+  loadingScreen: {fileID: 1543597507}
   title: The Newborn King
   intro: The old king is dead. Guide the regency and the infant heir. Swipe to decide.
+  loadingCaption: Preparing the regency
 --- !u!4 &2006645980
 Transform:
   m_ObjectHideFlags: 0

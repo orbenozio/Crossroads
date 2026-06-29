@@ -89,6 +89,7 @@ namespace UnityAgentBridge.Editor.CustomTools
                 pauseSo.ApplyModifiedProperties();
             }
             var audioDir = canvas.GetComponent<AudioDirector>() ?? canvas.AddComponent<AudioDirector>();
+            var loading = canvas.GetComponent<LoadingScreen>() ?? canvas.AddComponent<LoadingScreen>();
 
             // Game object + the concrete bootstrap (by type), fully wired.
             var gameGo = GameObject.Find("Game") ?? new GameObject("Game");
@@ -109,6 +110,8 @@ namespace UnityAgentBridge.Editor.CustomTools
             if (pauseProp != null) pauseProp.objectReferenceValue = pause;
             var audioProp = bSo.FindProperty("audioDirector");
             if (audioProp != null) audioProp.objectReferenceValue = audioDir;
+            var loadingProp = bSo.FindProperty("loadingScreen");
+            if (loadingProp != null) loadingProp.objectReferenceValue = loading;
             if (!string.IsNullOrEmpty(title)) bSo.FindProperty("title").stringValue = title;
             if (!string.IsNullOrEmpty(intro)) bSo.FindProperty("intro").stringValue = intro;
             bSo.ApplyModifiedProperties();
@@ -162,7 +165,7 @@ namespace UnityAgentBridge.Editor.CustomTools
         // and so re-wiring is idempotent for the menu/HUD objects.
         internal static void CleanOldUi(GameObject canvas)
         {
-            foreach (var name in new[] { "Meters", "MetersBg", "EndScreen", "MessageOverlay", "MenuOverlay", "PauseButton", "MapView" })
+            foreach (var name in new[] { "Meters", "MetersBg", "EndScreen", "MessageOverlay", "MenuOverlay", "PauseButton", "MapView", "LoadingScreen" })
             {
                 var t = canvas.transform.Find(name);
                 if (t != null) UnityEngine.Object.DestroyImmediate(t.gameObject);
