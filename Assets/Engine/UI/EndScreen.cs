@@ -99,9 +99,10 @@ namespace Crossroads.UI
                 artRt.SetParent(_panel, false);
                 Stretch(artRt);
                 _backdrop = artGo.GetComponent<Image>();
-                // Dimmed so the message reads over it, but kept high enough that the moody candlelit
-                // end-state paintings keep their detail (their upper region is dark anyway, where the text sits).
-                _backdrop.color = new Color(0.55f, 0.55f, 0.58f, 1f);
+                // Lightly dimmed so the message reads over it, but kept bright enough that the moody candlelit
+                // end-state paintings do not read as too dark (their upper region is dark anyway, where the
+                // text sits). Brightened from 0.55 after the endings looked a touch too dark on device.
+                _backdrop.color = new Color(0.82f, 0.82f, 0.84f, 1f);
                 _backdrop.raycastTarget = false;
                 _backdrop.enabled = false;   // SetBackdrop turns it on once a sprite is resolved
                 _backdropFit = artGo.GetComponent<AspectRatioFitter>();
