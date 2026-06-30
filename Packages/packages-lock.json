@@ -1,5 +1,15 @@
 {
   "dependencies": {
+    "com.orbenozio.crossroads": {
+      "version": "file:../unity-package",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0",
+        "com.unity.inputsystem": "1.14.0",
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
+    },
     "com.orbenozio.unity-agent-bridge": {
       "version": "https://github.com/orbenozio/unity-agent-bridge.git?path=/unity-package#v0.2.0",
       "depth": 0,

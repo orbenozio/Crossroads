@@ -1,0 +1,22 @@
+{
+  "name": "com.orbenozio.crossroads",
+  "version": "0.1.0",
+  "displayName": "Crossroads Engine",
+  "description": "Data-driven narrative decision engine (Reigns-style swipe + journey/roguelike map) with a reusable procedural UI skin. Ship a new game by swapping Content + Theme - no engine code changes.",
+  "unity": "6000.3",
+  "author": {
+    "name": "Or Benozio"
+  },
+  "dependencies": {
+    "com.unity.ugui": "2.0.0",
+    "com.unity.inputsystem": "1.14.0",
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "samples": [
+    {
+      "displayName": "Template Game",
+      "description": "Minimal Reigns-style game (Content + Theme + wired scene) to clone as a starting point for a new game.",
+      "path": "Samples~/Template"
+    }
+  ]
+}
