@@ -122,6 +122,9 @@ back to procedural defaults.
 
 **`map.json`** (journey only): `{ "startNodeId", "goalNodeId", "edges": { "node": ["next", ...] } }`.
 
+**Exact asset & sound list:** see `unity-package/ASSET-CHECKLIST.md` - every art/audio slot a game needs,
+its purpose, recommended size (from a shipped game), and the procedural fallback if skipped.
+
 **Authoring toolkit** - bridge `[McpTool]`s under `Assets/UnityAgentBridge/CustomTools/Editor/` (built for the
 NewbornKing POC, reused for every game). Generic: `create_theme`, `create_resource_set`, `create_hebrew_font`,
 `wire_game_scene`, `wire_journey_scene`, `wire_loading`, `set_theme_art/audio/button/font`, `set_ending_art`,

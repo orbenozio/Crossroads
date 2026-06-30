@@ -30,3 +30,6 @@ Pin a tag (`#v0.1.0`) so each game upgrades the engine on its own schedule.
 1. Import the **Template Game** sample (or copy a `Content/` + `Theme` set).
 2. Edit `story.json` / `resources.asset` / `theme.asset`.
 3. Wire a scene with a `GameBootstrap` that feeds the content into `EventEngine`.
+
+See **[ASSET-CHECKLIST.md](ASSET-CHECKLIST.md)** for the exact list of art and sound a game needs to prepare
+(every slot, its purpose, recommended size, and the procedural fallback if you skip it).
