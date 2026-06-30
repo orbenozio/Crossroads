@@ -1,6 +1,6 @@
 {
   "name": "com.orbenozio.crossroads",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "displayName": "Crossroads Engine",
   "description": "Data-driven narrative decision engine (Reigns-style swipe + journey/roguelike map) with a reusable procedural UI skin. Ship a new game by swapping Content + Theme - no engine code changes.",
   "unity": "6000.3",
