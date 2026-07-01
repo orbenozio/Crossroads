@@ -172,9 +172,9 @@ namespace UnityAgentBridge.Editor.CustomTools
             }
         }
 
-        // Full-screen backdrop behind the card (first sibling). When the theme has key art, the gameplay
-        // background is that art - dimmed (via color tint) and cover-fit so it fills any aspect while the
-        // card stays readable; otherwise a flat themed color. Created/recolored each wire.
+        // Full-screen backdrop behind the card (first sibling). Uses the theme's gameplay backdrop
+        // (theme.gameplayArt, falling back to keyArt) - dimmed (via color tint) and cover-fit so it fills
+        // any aspect while the card stays readable; otherwise a flat themed color. Created/recolored each wire.
         internal static void EnsureBackground(GameObject canvas, Theme theme)
         {
             var found = canvas.transform.Find("Background");
@@ -191,15 +191,15 @@ namespace UnityAgentBridge.Editor.CustomTools
             }
             var img = go.GetComponent<Image>();
             var fitter = go.GetComponent<AspectRatioFitter>();
-            bool hasArt = theme != null && theme.keyArt != null;
-            if (hasArt)
+            Sprite art = theme != null ? theme.GetGameplayArt() : null;
+            if (art != null)
             {
-                img.sprite = theme.keyArt;
+                img.sprite = art;
                 img.color = new Color(0.34f, 0.34f, 0.42f, 1f);   // dim the art so the card reads on top
                 if (fitter == null) fitter = go.AddComponent<AspectRatioFitter>();
                 fitter.enabled = true;
                 fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-                fitter.aspectRatio = theme.keyArt.rect.width / theme.keyArt.rect.height;
+                fitter.aspectRatio = art.rect.width / art.rect.height;
             }
             else
             {

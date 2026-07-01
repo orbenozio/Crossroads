@@ -24,7 +24,13 @@ orbenozio/refugee-road      game project (journey / map)
 - Two formats share one `EventEngine`: **Reigns** (swipe a card, 4 meters, break = game over) and
   **journey** (same engine wrapped in a node map with a goal). Journey adds only `map.json`.
 
-Current engine: **v0.1.1**. New games should pin `#v0.1.1` or later (>= v0.1.1 auto-imports TMP - see Gotchas).
+Current engine: **v0.4.0**. New games should pin `#v0.4.0` or later (>= v0.1.1 auto-imports TMP - see Gotchas).
+v0.4.0 makes the visual defaults data-driven (a semantic-role palette + `MedallionStyle`/`MeterStyle` component
+styles + a gameplay backdrop on the `Theme`), adds a pluggable `CardChoiceFeedback` hook to replace the
+choice-selection effect, and moves the engine's out-of-box default to a **neutral** look - a strong art
+direction ships as a skin `Theme` asset, not the default. Overrides are explicit (`OptionalFloat`/
+`OptionalColor`; unset = inherit the engine default). See `unity-package/THEMING.md` for the decision rule
+(token / style-struct / hook / core), the token model, and the compatibility policy.
 
 ---
 
@@ -114,11 +120,15 @@ Source-of-truth is data. The engine validates it at load and in tests. Schemas:
 YAML). Fields per meter: `id`, `displayName`, `min` (0), `max` (10), `start` (5), `breakOn`
 (`Min`/`Max`/`Both`), `dangerBand`. The array order is the fixed meter order. Most games use 4 meters.
 
-**`theme.asset`** (`Create > Crossroads > Theme`): Palette (background/card/text/accent/approaching/willBreak),
-Art sprites (keyArt, logo, cardArt, meterFrame, speakerFrame, buttonSprite, menuIcon, loadingArt), Audio
-(music, musicMenu, swipeSfx, cardSfx, clickSfx), Typography (font, tmpFont, `rightToLeft` for Hebrew),
-Overrides (per-resource labels/icons, per-speaker styles, per-ending backdrop art). All optional - nulls fall
-back to procedural defaults.
+**`theme.asset`** (`Create > Crossroads > Theme`): Palette base roles (background/card/text/accent/approaching/
+willBreak) + optional role overrides (textMuted, ring, divider, choiceHint, choiceGlow, hudPlate - unset falls
+back to a base role so `accent` is not overloaded), Art sprites (keyArt, logo, cardArt, meterFrame,
+speakerFrame, buttonSprite, menuIcon, loadingArt, gameplayArt), Audio (music, musicMenu, swipeSfx, cardSfx,
+clickSfx), component styles (`medallion`: size/ringColor/ringThickness/innerFraction; `meter`: iconSize/
+frameSize/iconTint), Typography (font, tmpFont, `rightToLeft` for Hebrew), Overrides (per-resource
+labels/icons, per-speaker styles, per-ending backdrop art). All optional - `OptionalFloat`/`OptionalColor`
+metrics inherit the engine default when unset (`set == false`), sprites fall back when null. The engine default
+is a **neutral** look; the medieval identity ships as a skin `Theme` sample. See `unity-package/THEMING.md`.
 
 **`map.json`** (journey only): `{ "startNodeId", "goalNodeId", "edges": { "node": ["next", ...] } }`.
 

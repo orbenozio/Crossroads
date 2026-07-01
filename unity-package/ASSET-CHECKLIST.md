@@ -34,6 +34,11 @@ Set on the `theme.asset`. Fallback = what you get if left null.
 | ☐ | `buttonSprite` | 9-sliced button plate | **2172 x 724** (wide, set 9-slice borders) | flat colored buttons |
 | ☐ | `menuIcon` | Pause / menu button icon | **1252 x 1252** (square, transparent) | built-in three bars |
 | ☐ | `loadingArt` | Full-bleed poster for the loading screen | **940 x 1672** (portrait) | falls back to `keyArt` |
+| ☐ | `gameplayArt` | Backdrop for the gameplay screen (behind the card) | **940 x 1672** (portrait) | falls back to `keyArt` |
+
+> Beyond art: the `theme.asset` also carries a semantic-role color palette and per-widget component styles
+> (`medallion`, `meter`) - all optional, all inherit a neutral engine default when unset. Those are colors and
+> metrics, not assets to prepare, so they live in `THEMING.md` (the theming & extensibility contract), not here.
 
 ---
 

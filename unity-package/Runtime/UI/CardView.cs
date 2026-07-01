@@ -19,18 +19,42 @@ namespace Crossroads.UI
         [SerializeField] private Image cardBackground;
 
         private const float EnterDuration = 0.18f;
-        private static readonly Color DimChoice = new Color(1f, 0.9f, 0.62f, 1f);   // resting choice-hint color (warm gold, full opacity for contrast - agent)
-        private static readonly Color GlowHalo = new Color(1f, 0.82f, 0.4f, 1f);     // bright gold the active plaque's glow-halo is drawn in
-        private static readonly Color WarmPlaque = new Color(1f, 0.96f, 0.86f, 1f);  // a faint warm lift on the active plaque (tint only darkens, so kept near white)
-        private static readonly Color DimPlaque = new Color(0.5f, 0.48f, 0.45f, 1f); // the non-dragged plaque recedes while the other is chosen
         private RectTransform _rt;
         private Coroutine _enter;
         private Image _portraitImg;       // the speaker icon masked to a circle (child of speakerIcon)
         private Image _portraitRing;      // bronze medallion ring drawn on top, unmasked
         private Color _choiceColor = Color.white;   // theme text color the active hint brightens toward
+        private Color _choiceHint = ThemeDefaults.ChoiceHint;   // resting choice-label color (token)
+        private Color _choiceGlow = ThemeDefaults.ChoiceGlow;   // active choice glow-halo (token)
         private Image _leftBg, _rightBg;            // choice plaque backgrounds, cached for the drag glow
         private TMP_Text _leftPreview, _rightPreview;   // per-side projected-delta preview, shown above the active plaque
         private RectTransform Rt => _rt != null ? _rt : (_rt = (RectTransform)transform);
+
+        // Pluggable selection feedback (the grow/whiten/glow when a side is dragged). A game can drop its
+        // own CardChoiceFeedback component on the Card to fully replace it (e.g. a warm light sweep); with
+        // none present the engine runs DefaultCardChoiceFeedback. Re-resolved on each Bind so a component
+        // added in the scene is picked up. The card's slide/tilt stays engine core (a format affordance).
+        private ICardChoiceFeedback _feedback;
+        private DefaultCardChoiceFeedback _defaultFeedback;
+        private ICardChoiceFeedback Feedback
+        {
+            get
+            {
+                if (_feedback != null) return _feedback;
+                var custom = GetComponent<CardChoiceFeedback>() as ICardChoiceFeedback;
+                return _feedback = custom ?? (_defaultFeedback ?? (_defaultFeedback = new DefaultCardChoiceFeedback()));
+            }
+        }
+
+        // Read-only surface the feedback strategy drives: the two choice plaques, their labels, and the
+        // theme text color the active hint brightens toward.
+        public Image LeftPlaque => _leftBg;
+        public Image RightPlaque => _rightBg;
+        public TMP_Text LeftChoiceLabel => leftLabel;
+        public TMP_Text RightChoiceLabel => rightLabel;
+        public Color ChoiceTextColor => _choiceColor;
+        public Color ChoiceHintColor => _choiceHint;   // resting choice-hint color (token; default neutral)
+        public Color ChoiceGlowColor => _choiceGlow;   // active glow-halo color (token; default neutral)
 
         // Swipe affordance (onboarding): on a fresh card left untouched for a beat, a touch-puck drifts
         // left<->right between two chevrons to teach the genre's swipe to first-time players. It hides the
@@ -47,6 +71,7 @@ namespace Crossroads.UI
 
         public void Bind(EventNodeView view, Theme theme)
         {
+            _feedback = null;   // re-resolve the pluggable feedback (a game may have added its component)
             if (bodyText != null) bodyText.text = view.Body;
             if (leftLabel != null) leftLabel.text = view.LeftLabel;
             if (rightLabel != null) rightLabel.text = view.RightLabel;
@@ -91,6 +116,8 @@ namespace Crossroads.UI
             if (theme != null)
             {
                 _choiceColor = theme.text;
+                _choiceHint = theme.ChoiceHint;   // resting / active choice-hint tokens the feedback reads
+                _choiceGlow = theme.ChoiceGlow;
                 if (cardBackground != null)
                 {
                     // Card art when the theme has it (drawn at true colors), else the flat card color.
@@ -130,41 +157,8 @@ namespace Crossroads.UI
             Rt.anchoredPosition = new Vector2(dir * f * 120f, 0f);
             Rt.localRotation = Quaternion.Euler(0f, 0f, -dir * f * 3f);
 
-            bool leftActive = side == ChoiceSide.Left;
-            TMP_Text active = leftActive ? leftLabel : rightLabel;
-            TMP_Text other = leftActive ? rightLabel : leftLabel;
-            if (active != null) active.color = Color.Lerp(DimChoice, _choiceColor, f);
-            if (other != null) other.color = DimChoice;
-
-            // The chosen plaque lights up (warm-gold tint), swells, and gains a bronze glow-outline that
-            // grows with the drag, so the active option reads as clearly selected; the other recedes.
-            ApplyPlaqueGlow(_leftBg, leftLabel, leftActive ? f : 0f, !leftActive && f > 0.001f);
-            ApplyPlaqueGlow(_rightBg, rightLabel, leftActive ? 0f : f, leftActive && f > 0.001f);
-        }
-
-        // Lights a single choice plaque by its drag fraction: tint white -> warm gold, scale up, and a
-        // glow-outline whose spread grows with the drag. A dimmed (non-active during a drag) plaque recedes.
-        private static void ApplyPlaqueGlow(Image bg, TMP_Text label, float active, bool dimmed)
-        {
-            float s = 1f + 0.09f * active;
-            if (bg != null)
-            {
-                bg.color = dimmed ? DimPlaque : Color.Lerp(Color.white, WarmPlaque, active);
-                bg.rectTransform.localScale = new Vector3(s, s, 1f);
-                var ol = bg.GetComponent<Outline>();
-                if (active > 0.001f)
-                {
-                    // The glow is the Outline's offset copies drawn in bright gold: a wide, strong halo so
-                    // the chosen plaque clearly lights up (tinting the dark plaque itself can only darken it).
-                    if (ol == null) ol = bg.gameObject.AddComponent<Outline>();
-                    ol.effectColor = new Color(GlowHalo.r, GlowHalo.g, GlowHalo.b, 0.9f * active);
-                    float d = 8f * active;
-                    ol.effectDistance = new Vector2(d, -d);
-                    ol.enabled = true;
-                }
-                else if (ol != null) ol.enabled = false;
-            }
-            if (label != null) label.rectTransform.localScale = new Vector3(s, s, 1f);
+            // The selection emphasis (which side lights up and how) is delegated so a game can replace it.
+            Feedback.ApplyDrag(this, side, f);
         }
 
         // Projected-delta preview (§10.3), restored on the card per user feedback: the meters the chosen
@@ -197,11 +191,9 @@ namespace Crossroads.UI
             Rt.anchoredPosition = Vector2.zero;
             Rt.localRotation = Quaternion.identity;
             Rt.localScale = Vector3.one;
-            if (leftLabel != null) leftLabel.color = DimChoice;
-            if (rightLabel != null) rightLabel.color = DimChoice;
-            // Drop both plaques back to their resting (un-lit) state and clear the on-card delta preview.
-            ApplyPlaqueGlow(_leftBg, leftLabel, 0f, false);
-            ApplyPlaqueGlow(_rightBg, rightLabel, 0f, false);
+            // Drop both plaques/labels back to their resting state (via the active feedback) and clear the
+            // on-card delta preview.
+            Feedback.Reset(this);
             if (_leftPreview != null) _leftPreview.text = string.Empty;
             if (_rightPreview != null) _rightPreview.text = string.Empty;
         }
@@ -443,19 +435,24 @@ namespace Crossroads.UI
         // on top. Idempotent and edit-mode safe (also migrates the legacy full-size-masked layout).
         private void ApplyRoundPortrait(Sprite portraitSprite, Theme theme)
         {
+            float size = theme != null ? theme.MedallionSize : ThemeDefaults.PortraitSize;   // theme-configurable medallion diameter
             var rt = speakerIcon.rectTransform;
             // Force a square rect (centered in the upper card) so the medallion is round, not an ellipse.
             rt.anchorMin = new Vector2(0.5f, 0.72f);
             rt.anchorMax = new Vector2(0.5f, 0.72f);
             rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(250f, 250f);
-            rt.anchoredPosition = new Vector2(0f, 22f);   // lift the medallion + ring clear of the name plate below it
+            rt.sizeDelta = new Vector2(size, size);
+            // Pin the medallion's BOTTOM edge (not its center) so resizing grows/shrinks it upward into the
+            // card art instead of overlapping the name plate + body below it. At the default 250 this is +22,
+            // matching the original hand-tuned lift; a smaller/larger medallion keeps the same clear bottom.
+            rt.anchoredPosition = new Vector2(0f, size * 0.5f - (ThemeDefaults.PortraitSize * 0.5f - 22f));
 
             bool ornate = theme != null && theme.speakerFrame != null;
-            // Clip the portrait to the frame's clear opening. speaker-frame.png's laurel begins at ~0.74 of
-            // the radius; 0.78 tucks the portrait edge just under the laurel's inner lip (the ring on top
-            // hides the overlap). A plain procedural ring sits at the rim, so there the portrait fills the disc.
-            float innerFrac = ornate ? 0.78f : 1f;
+            // Clip the portrait to the frame's clear opening. An ornate frame's laurel begins near the rim;
+            // innerFraction (default 0.78) tucks the portrait edge just under its inner lip (the ring on top
+            // hides the overlap) and is theme-configurable per frame asset. A plain procedural ring sits at the
+            // rim, so there the portrait fills the disc.
+            float innerFrac = ornate ? (theme != null ? theme.MedallionInnerFraction : ThemeDefaults.InnerFraction) : 1f;
 
             // speakerIcon is now just the medallion container - the mask moved to an inset child so the
             // frame ring can stay full-size and unmasked. Strip the legacy mask/disc off the container.
@@ -473,7 +470,7 @@ namespace Crossroads.UI
             var pmRt = pmImg.rectTransform;
             pmRt.anchorMin = new Vector2(0.5f, 0.5f); pmRt.anchorMax = new Vector2(0.5f, 0.5f);
             pmRt.pivot = new Vector2(0.5f, 0.5f);
-            pmRt.sizeDelta = new Vector2(250f * innerFrac, 250f * innerFrac);
+            pmRt.sizeDelta = new Vector2(size * innerFrac, size * innerFrac);
             pmRt.anchoredPosition = Vector2.zero;
             pmRt.SetAsFirstSibling();   // behind the ring
             pmImg.sprite = PortraitShapes.Disc;
@@ -504,12 +501,14 @@ namespace Crossroads.UI
             _portraitRing.transform.SetParent(speakerIcon.transform, false);
             StretchFull(_portraitRing.rectTransform);
             _portraitRing.transform.SetAsLastSibling();
-            // An ornate engraved medallion frame from the theme when present, else a plain procedural ring.
-            _portraitRing.sprite = ornate ? theme.speakerFrame : PortraitShapes.Ring;
+            // An ornate engraved medallion frame from the theme when present, else a plain procedural ring
+            // whose band width + color are theme-configurable (a game can soften the default ring).
+            float ringThickness = theme != null ? theme.MedallionRingThickness : ThemeDefaults.RingThickness;
+            _portraitRing.sprite = ornate ? theme.speakerFrame : PortraitShapes.RingOf(ringThickness);
             _portraitRing.preserveAspect = false;
             _portraitRing.raycastTarget = false;
             _portraitRing.maskable = false;        // drawn over the mask boundary, not clipped by it
-            _portraitRing.color = ornate ? Color.white : (theme != null ? theme.accent : new Color(0.62f, 0.50f, 0.28f));
+            _portraitRing.color = ornate ? Color.white : (theme != null ? theme.MedallionRingColor : ThemeDefaults.Accent);
         }
 
         private static void StretchFull(RectTransform rt)
@@ -548,9 +547,23 @@ namespace Crossroads.UI
     // import or cut. The ring stores a grey radial shade that the Image color tints to bronze metal.
     internal static class PortraitShapes
     {
-        private static Sprite _disc, _ring;
+        private static Sprite _disc;
+        // Rings are cached per band-width (the theme can pick the thickness), keyed by the rounded fraction
+        // so a handful of distinct widths never rebuild the texture each bind.
+        private static readonly System.Collections.Generic.Dictionary<int, Sprite> _rings = new System.Collections.Generic.Dictionary<int, Sprite>();
         public static Sprite Disc => _disc != null ? _disc : (_disc = BuildDisc(256));
-        public static Sprite Ring => _ring != null ? _ring : (_ring = BuildRing(256));
+        public static Sprite Ring => RingOf(0.06f);
+
+        // A procedural ring with the given band width as a fraction of the radius (default look = 0.06).
+        public static Sprite RingOf(float thicknessFrac)
+        {
+            if (thicknessFrac <= 0f) thicknessFrac = 0.06f;
+            int key = Mathf.RoundToInt(Mathf.Clamp(thicknessFrac, 0.01f, 0.4f) * 1000f);
+            if (_rings.TryGetValue(key, out var s)) return s;
+            s = BuildRing(256, key / 1000f);
+            _rings[key] = s;
+            return s;
+        }
 
         private static Sprite BuildDisc(int n)
         {
@@ -567,10 +580,10 @@ namespace Crossroads.UI
             return ToSprite(tex, n);
         }
 
-        private static Sprite BuildRing(int n)
+        private static Sprite BuildRing(int n, float thicknessFrac)
         {
             var tex = NewTex(n);
-            float c = (n - 1) * 0.5f, outer = n * 0.5f - 1f, inner = outer - n * 0.06f;
+            float c = (n - 1) * 0.5f, outer = n * 0.5f - 1f, inner = outer - n * thicknessFrac;
             var px = new Color[n * n];
             for (int y = 0; y < n; y++)
                 for (int x = 0; x < n; x++)

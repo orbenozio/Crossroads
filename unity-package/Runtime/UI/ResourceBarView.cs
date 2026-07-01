@@ -14,9 +14,6 @@ namespace Crossroads.UI
         private Theme _theme;
         private RectTransform _container;
         private readonly Dictionary<string, Bar> _bars = new Dictionary<string, Bar>();
-        // Tints the bright-gold meter icon art down to the card's muted antique-bronze, so the HUD reads
-        // as the same material as the medallion/card instead of "shouting gold" (ux review: less gold).
-        private static readonly Color MeterIconTint = new Color(0.72f, 0.64f, 0.48f, 1f);
 
         private sealed class Bar { public RectTransform root; public RectTransform fill; public Image fillImg; public Image frame; public Image icon; public TextMeshProUGUI label; public string baseLabel; }
 
@@ -48,7 +45,8 @@ namespace Crossroads.UI
                 if (bar.icon != null)
                 {
                     bar.icon.gameObject.SetActive(hasIcon);
-                    if (hasIcon) { bar.icon.sprite = v.Icon; bar.icon.color = MeterIconTint; }
+                    // Tint the meter icon art (default neutral), theme-overridable.
+                    if (hasIcon) { bar.icon.sprite = v.Icon; bar.icon.color = _theme != null ? _theme.MeterIconTint : ThemeDefaults.MeterIconTint; }
                 }
                 if (bar.frame != null)
                 {
@@ -93,20 +91,22 @@ namespace Crossroads.UI
         // box is scaled past the plate height - the transparent margin overflows harmlessly - to bring the
         // ring up near the plate; the icon fills the ring's inner opening. Centered on the plate's left
         // half (x = 0.25). Applied every Bind so existing/scene-baked bars resize too, not just new ones.
-        private static void StyleMeterIcon(Bar bar)
+        private void StyleMeterIcon(Bar bar)
         {
+            float frameSize = _theme != null ? _theme.MeterFrameSize : ThemeDefaults.MeterFrameSize;   // theme-configurable
+            float iconSize = _theme != null ? _theme.MeterIconSize : ThemeDefaults.MeterIconSize;      // theme-configurable
             if (bar.frame != null && bar.frame.gameObject.activeSelf)
             {
                 var frt = bar.frame.rectTransform;
                 frt.anchorMin = frt.anchorMax = new Vector2(0.25f, 0.5f);
                 frt.pivot = new Vector2(0.5f, 0.5f);
-                frt.sizeDelta = new Vector2(132f, 132f);
+                frt.sizeDelta = new Vector2(frameSize, frameSize);
                 frt.anchoredPosition = Vector2.zero;
             }
             var irt = bar.icon.rectTransform;
             irt.anchorMin = irt.anchorMax = new Vector2(0.25f, 0.5f);
             irt.pivot = new Vector2(0.5f, 0.5f);
-            irt.sizeDelta = new Vector2(82f, 82f);
+            irt.sizeDelta = new Vector2(iconSize, iconSize);
             irt.anchoredPosition = Vector2.zero;
         }
 
@@ -127,11 +127,12 @@ namespace Crossroads.UI
                 if (kv.Value.baseLabel != null) kv.Value.label.text = kv.Value.baseLabel;
         }
 
-        // A darker, richer meter plate (was a pale translucent track) so the icon + value read clearly.
+        // The meter plate fill: the `hudPlate` token when the theme sets it, else derived from the background
+        // (legacy formula, kept identical for themes that leave it unset - a light-background game sets it).
         private Color PlateColor()
         {
-            Color b = _theme != null ? _theme.background : new Color(0.10f, 0.10f, 0.13f);
-            return new Color(b.r * 1.4f + 0.04f, b.g * 1.4f + 0.04f, b.b * 1.5f + 0.05f, 0.72f);
+            if (_theme != null) return _theme.HudPlate;
+            return ThemeDefaults.HudPlate(new Color(0.10f, 0.10f, 0.13f));
         }
 
         private Color FillColor(DangerLevel d)
@@ -210,8 +211,8 @@ namespace Crossroads.UI
             srt.anchorMin = new Vector2(0f, 0f); srt.anchorMax = new Vector2(1f, 0f);
             srt.pivot = new Vector2(0.5f, 0f);
             srt.sizeDelta = new Vector2(0f, 3f); srt.anchoredPosition = Vector2.zero;
-            Color accent = _theme != null ? _theme.accent : new Color(0.85f, 0.68f, 0.28f);
-            sep.GetComponent<Image>().color = new Color(accent.r, accent.g, accent.b, 0.7f);   // a touch stronger now the accent is muted bronze (ux round 2)
+            Color div = _theme != null ? _theme.Divider : ThemeDefaults.Accent;   // divider role (unset -> accent)
+            sep.GetComponent<Image>().color = new Color(div.r, div.g, div.b, 0.7f);
             sep.GetComponent<Image>().raycastTarget = false;
         }
 

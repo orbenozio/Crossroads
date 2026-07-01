@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Crossroads.Engine;
 using Crossroads.UI;
@@ -39,6 +40,53 @@ namespace Crossroads.Engine.Tests
                 Assert.AreEqual("sleep 6", sleepLabel.text, "clear restores the base label");
             }
             finally { Object.DestroyImmediate(go); }
+        }
+
+        private static Sprite Sprite1x1()
+        {
+            var tex = new Texture2D(4, 4, TextureFormat.RGBA32, false, false);
+            return Sprite.Create(tex, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 100f);
+        }
+
+        [Test]
+        public void MeterIcon_UsesThemeSizeAndTint()
+        {
+            var go = new GameObject("bars");
+            var theme = ScriptableObject.CreateInstance<Theme>();
+            var icon = Sprite1x1();
+            var frameArt = Sprite1x1();
+            try
+            {
+                // A theme that supplies a meter icon + frame art, with overridden sizes and tint.
+                theme.resourceLabels.Add(new Theme.ResourceLabel { id = "sleep", icon = icon });
+                theme.meterFrame = frameArt;
+                theme.meter = new Theme.MeterStyle
+                {
+                    iconSize = new OptionalFloat(64f),
+                    frameSize = new OptionalFloat(100f),
+                    iconTint = new OptionalColor(new Color(1f, 0f, 0f, 1f)),
+                };
+
+                var bars = go.AddComponent<ResourceBarView>();
+                var res = TestData.Resources(("sleep", 6));
+                bars.SetTheme(theme);
+                bars.Bind(ViewMapper.BuildResourceViews(StateWith(("sleep", 6)), res, theme));
+
+                var iconImg = go.transform.Find("Meters/Bar_sleep/Icon").GetComponent<Image>();
+                Assert.IsTrue(iconImg.gameObject.activeSelf, "meter icon shown when the theme supplies one");
+                Assert.AreEqual(new Vector2(64f, 64f), iconImg.rectTransform.sizeDelta, "icon sized from the theme");
+                Assert.AreEqual(new Color(1f, 0f, 0f, 1f), iconImg.color, "icon tinted from the theme");
+
+                var frame = go.transform.Find("Meters/Bar_sleep/Frame").GetComponent<Image>();
+                Assert.AreEqual(new Vector2(100f, 100f), frame.rectTransform.sizeDelta, "frame sized from the theme");
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+                Object.DestroyImmediate(theme);
+                Object.DestroyImmediate(icon.texture); Object.DestroyImmediate(icon);
+                Object.DestroyImmediate(frameArt.texture); Object.DestroyImmediate(frameArt);
+            }
         }
 
         [Test]
