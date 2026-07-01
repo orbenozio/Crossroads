@@ -42,6 +42,7 @@ namespace Crossroads.UI
         {
             Ensure();
             ApplyBackdrop();
+            ApplyBranding();
             if (_running) return;
             _running = true;
             _panel.SetAsLastSibling();
@@ -202,8 +203,6 @@ namespace Crossroads.UI
             bar.pivot = new Vector2(0.5f, 0.5f);
             bar.sizeDelta = new Vector2(640f, 120f);
 
-            Color accent = _theme != null ? _theme.accent : new Color(0.62f, 0.50f, 0.28f);
-
             // Caption above the channel.
             var capGo = new GameObject("Caption", typeof(RectTransform), typeof(TextMeshProUGUI));
             var capRt = (RectTransform)capGo.transform;
@@ -216,8 +215,7 @@ namespace Crossroads.UI
             UIFonts.Apply(_caption);
             _caption.fontSize = 26; _caption.fontStyle = FontStyles.Bold; _caption.characterSpacing = 4f;
             _caption.alignment = TextAlignmentOptions.Center;
-            _caption.color = new Color(1f, 0.86f, 0.55f, 0.92f);
-            _caption.raycastTarget = false;
+            _caption.raycastTarget = false;   // color set in ApplyBranding
             _caption.text = string.Empty;
 
             // Engraved channel (the same plaque material as buttons / panels), 9-sliced.
@@ -251,10 +249,10 @@ namespace Crossroads.UI
             var fillImg = fillGo.GetComponent<Image>();
             fillImg.sprite = BarShapes.Fill;
             fillImg.type = Image.Type.Simple;
-            fillImg.color = Color.white;
-            fillImg.raycastTarget = false;
+            fillImg.raycastTarget = false;   // color (theme accent) set in ApplyBranding
 
-            // Gilded crown marker riding the leading edge.
+            // Marker riding the leading edge. The sprite + tint are theme-driven (ApplyBranding): a game's
+            // loadingMarker when set, else a plain procedural seal - never a game-specific shape by default.
             var headGo = new GameObject("Head", typeof(RectTransform), typeof(Image));
             _head = (RectTransform)headGo.transform;
             _head.SetParent(chan, false);
@@ -262,8 +260,6 @@ namespace Crossroads.UI
             _head.pivot = new Vector2(0.5f, 0.5f);
             _head.sizeDelta = new Vector2(52f, 52f);
             var headImg = headGo.GetComponent<Image>();
-            headImg.sprite = CrownShapes.Crown;
-            headImg.color = new Color(1f, 0.95f, 0.78f, 1f);   // bright ivory-gold crown, pops over the fill
             headImg.raycastTarget = false;
 
             // Percent readout, carved serif, below the channel.
@@ -278,9 +274,39 @@ namespace Crossroads.UI
             UIFonts.Apply(_percent);
             _percent.fontSize = 28; _percent.fontStyle = FontStyles.Bold; _percent.characterSpacing = 2f;
             _percent.alignment = TextAlignmentOptions.Center;
-            _percent.color = Brighten(accent, 0.35f);
-            _percent.raycastTarget = false;
+            _percent.raycastTarget = false;   // color set in ApplyBranding
             _percent.text = "0%";
+
+            ApplyBranding();
+        }
+
+        // Themes the progress marker + fill + text from the current theme (see THEMING.md - neutral default,
+        // no game-specific identity baked in). Idempotent; called from BuildBar and again from Run so a
+        // theme set after build, or a scene-baked hierarchy, still gets the right look.
+        private void ApplyBranding()
+        {
+            Color accent = _theme != null ? _theme.accent : ThemeDefaults.Accent;
+            Sprite marker = _theme != null ? _theme.loadingMarker : null;
+
+            if (_head != null)
+            {
+                var headImg = _head.GetComponent<Image>();
+                if (headImg != null)
+                {
+                    // A game's own marker art (drawn at true colors), else a plain procedural seal tinted to the accent.
+                    headImg.sprite = marker != null ? marker : PortraitShapes.Disc;
+                    headImg.color = marker != null ? Color.white : Brighten(accent, 0.4f);
+                }
+            }
+            // The fill is a neutral luminance gradient tinted to the accent, so it follows the theme
+            // (neutral by default, bronze under the medieval skin) instead of a hardcoded bronze->gold.
+            if (_fill != null)
+            {
+                var fillImg = _fill.GetComponent<Image>();
+                if (fillImg != null) fillImg.color = Brighten(accent, 0.15f);
+            }
+            if (_caption != null) _caption.color = new Color(0.92f, 0.92f, 0.94f, 0.92f);
+            if (_percent != null) _percent.color = Brighten(accent, 0.35f);
         }
 
         private static Color Brighten(Color c, float a) =>
@@ -293,8 +319,9 @@ namespace Crossroads.UI
         }
     }
 
-    // Procedural horizontal gradient for the progress fill: deep bronze on the left brightening to a
-    // molten gold at the right (leading) edge, so the bar reads as filling with light. Built once, cached.
+    // Procedural horizontal gradient for the progress fill: a neutral luminance ramp (dim on the left
+    // brightening to full at the leading edge) that the LoadingScreen tints to the theme accent, so the bar
+    // follows the theme instead of a hardcoded bronze->gold. Built once, cached.
     internal static class BarShapes
     {
         private static Sprite _fill;
@@ -304,8 +331,8 @@ namespace Crossroads.UI
         {
             var tex = new Texture2D(n, 4, TextureFormat.RGBA32, false, false)
                 { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-            var lo = new Color(0.32f, 0.20f, 0.08f, 1f);   // deep bronze (trailing)
-            var hi = new Color(1f, 0.82f, 0.42f, 1f);      // molten gold (leading)
+            var lo = new Color(0.35f, 0.35f, 0.35f, 1f);   // dim (trailing)
+            var hi = new Color(1f, 1f, 1f, 1f);            // bright (leading) - tinted by the accent at runtime
             var px = new Color[n * 4];
             for (int x = 0; x < n; x++)
             {
@@ -316,64 +343,5 @@ namespace Crossroads.UI
             tex.SetPixels(px); tex.Apply(false, false);
             return Sprite.Create(tex, new Rect(0, 0, n, 4), new Vector2(0.5f, 0.5f), 100f);
         }
-    }
-
-    // A procedural heraldic crown silhouette (white, so the Image color tints it): a base band with three
-    // rising spikes and a small ball at each tip. Built once and cached; drawn 4x supersampled for clean
-    // edges when scaled down onto the small progress-bar marker.
-    internal static class CrownShapes
-    {
-        private static Sprite _crown;
-        public static Sprite Crown => _crown != null ? _crown : (_crown = BuildCrown(128));
-
-        private static Sprite BuildCrown(int n)
-        {
-            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false, false)
-                { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-
-            // Geometry in normalized [0,1] coords (origin bottom-left).
-            const float bandB = 0.24f, bandT = 0.50f, bandL = 0.12f, bandR = 0.88f;
-            Vector2 P(float u, float v) => new Vector2(u * (n - 1), v * (n - 1));
-            var triL = new[] { P(0.12f, bandT), P(0.36f, bandT), P(0.24f, 0.74f) };
-            var triC = new[] { P(0.36f, bandT), P(0.64f, bandT), P(0.50f, 0.90f) };
-            var triR = new[] { P(0.64f, bandT), P(0.88f, bandT), P(0.76f, 0.74f) };
-            var tips = new[] { (P(0.24f, 0.76f), 0.055f), (P(0.50f, 0.92f), 0.062f), (P(0.76f, 0.76f), 0.055f) };
-
-            var px = new Color[n * n];
-            const int ss = 2;   // 2x2 supersample for anti-aliasing
-            for (int y = 0; y < n; y++)
-                for (int x = 0; x < n; x++)
-                {
-                    int hits = 0;
-                    for (int sy = 0; sy < ss; sy++)
-                        for (int sx = 0; sx < ss; sx++)
-                        {
-                            var p = new Vector2(x + (sx + 0.5f) / ss, y + (sy + 0.5f) / ss);
-                            float u = p.x / (n - 1), v = p.y / (n - 1);
-                            bool inBand = u >= bandL && u <= bandR && v >= bandB && v <= bandT;
-                            bool inSpike = InTri(p, triL[0], triL[1], triL[2])
-                                        || InTri(p, triC[0], triC[1], triC[2])
-                                        || InTri(p, triR[0], triR[1], triR[2]);
-                            bool inTip = false;
-                            foreach (var (c, r) in tips)
-                                if ((p - c).sqrMagnitude <= (r * (n - 1)) * (r * (n - 1))) { inTip = true; break; }
-                            if (inBand || inSpike || inTip) hits++;
-                        }
-                    px[y * n + x] = new Color(1f, 1f, 1f, hits / (float)(ss * ss));
-                }
-            tex.SetPixels(px); tex.Apply(false, false);
-            return Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f);
-        }
-
-        private static bool InTri(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
-        {
-            float d1 = Sign(p, a, b), d2 = Sign(p, b, c), d3 = Sign(p, c, a);
-            bool neg = d1 < 0f || d2 < 0f || d3 < 0f;
-            bool pos = d1 > 0f || d2 > 0f || d3 > 0f;
-            return !(neg && pos);
-        }
-
-        private static float Sign(Vector2 p1, Vector2 p2, Vector2 p3) =>
-            (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
     }
 }

@@ -40,6 +40,7 @@ namespace Crossroads.UI
         public Sprite menuIcon;    // optional icon for the pause/menu button; null = the built-in three bars
         public Sprite loadingArt;  // optional full-bleed poster for the branded loading screen; null = fall back to keyArt
         public Sprite gameplayArt; // optional backdrop for the gameplay screen; null = fall back to keyArt
+        public Sprite loadingMarker; // optional icon riding the loading progress bar; null = a plain procedural seal
 
         [Header("Audio")]
         public AudioClip music;     // looping gameplay track

@@ -10,7 +10,7 @@ namespace UnityAgentBridge.Editor.CustomTools
     // meterFrame). Keeps art data-driven: the theme owns it, so cloning swaps art via its theme (J8).
     public static class set_theme_art
     {
-        [McpTool("set_theme_art", "Import an image as a Sprite into a Theme slot (field=keyArt|logo|cardArt|meterFrame|menuIcon|buttonSprite|loadingArt|gameplayArt)")]
+        [McpTool("set_theme_art", "Import an image as a Sprite into a Theme slot (field=keyArt|logo|cardArt|meterFrame|menuIcon|buttonSprite|loadingArt|gameplayArt|loadingMarker)")]
         public static object Invoke(string themePath = "", string spritePath = "", string field = "keyArt")
         {
             if (string.IsNullOrEmpty(themePath)) throw new Exception("themePath is required");
@@ -45,6 +45,7 @@ namespace UnityAgentBridge.Editor.CustomTools
                 case "buttonsprite": theme.buttonSprite = sprite; break;
                 case "loadingart":   theme.loadingArt = sprite; break;
                 case "gameplayart":  theme.gameplayArt = sprite; break;
+                case "loadingmarker": theme.loadingMarker = sprite; break;
                 default:             theme.keyArt = sprite; field = "keyArt"; break;
             }
             EditorUtility.SetDirty(theme);
