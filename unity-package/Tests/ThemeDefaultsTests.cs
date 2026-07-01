@@ -37,6 +37,8 @@ namespace Crossroads.Engine.Tests
                 Assert.AreEqual(ThemeDefaults.ChoiceHint, t.ChoiceHint, "choice hint default");
                 Assert.AreEqual(ThemeDefaults.ChoiceGlow, t.ChoiceGlow, "choice glow default");
                 Assert.AreEqual(ThemeDefaults.HudPlate(t.background), t.HudPlate, "hud plate derived from background");
+                Assert.AreEqual(ThemeDefaults.PlaqueFill, t.PlaqueFill, "plaque fill default");
+                Assert.AreEqual(ThemeDefaults.PlaqueEdge, t.PlaqueEdge, "plaque edge default (neutral, not bronze)");
             }
             finally { Object.DestroyImmediate(t); }
         }
@@ -61,6 +63,7 @@ namespace Crossroads.Engine.Tests
                     iconTint = new OptionalColor(new Color(1f, 0f, 0f, 1f)),
                 };
                 t.divider = new OptionalColor(new Color(0f, 1f, 0f, 1f));
+                t.plaqueEdge = new OptionalColor(new Color(0.55f, 0.45f, 0.26f, 0.95f));   // medieval bronze
 
                 Assert.AreEqual(180f, t.MedallionSize);
                 Assert.AreEqual(0.03f, t.MedallionRingThickness, 1e-5f);
@@ -70,6 +73,7 @@ namespace Crossroads.Engine.Tests
                 Assert.AreEqual(100f, t.MeterFrameSize);
                 Assert.AreEqual(new Color(1f, 0f, 0f, 1f), t.MeterIconTint);
                 Assert.AreEqual(new Color(0f, 1f, 0f, 1f), t.Divider, "explicit divider overrides accent");
+                Assert.AreEqual(new Color(0.55f, 0.45f, 0.26f, 0.95f), t.PlaqueEdge, "explicit plaque edge overrides the neutral default");
             }
             finally { Object.DestroyImmediate(t); }
         }

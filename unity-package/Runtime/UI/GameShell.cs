@@ -41,6 +41,9 @@ namespace Crossroads.UI
             public AudioDirector audioDirector;
             public LoadingScreen loadingScreen;
             public MapView mapView;            // Journey only
+
+            // Optional gameplay hooks a game injects (uniform wiring - preferred over scene GetComponent).
+            public ICardChoiceFeedback choiceFeedback;   // custom choice-selection effect; null = engine default
         }
 
         private Config _c;
@@ -82,6 +85,7 @@ namespace Crossroads.UI
             UIFonts.RightToLeft = _c.theme != null && _c.theme.rightToLeft;   // Hebrew/RTL before building the UI
             UIFonts.UseThemeFont(_c.theme);
             if (_c.resourceBar != null) _c.resourceBar.SetTheme(_c.theme);
+            if (_c.cardView != null && _c.choiceFeedback != null) _c.cardView.SetChoiceFeedback(_c.choiceFeedback);
             if (_c.menu != null) _c.menu.SetTheme(_c.theme);
             if (_c.endScreen != null) _c.endScreen.SetTheme(_c.theme);
             if (_c.swipeInput != null)

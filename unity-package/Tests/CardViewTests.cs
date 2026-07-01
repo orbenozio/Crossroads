@@ -108,5 +108,40 @@ namespace Crossroads.Engine.Tests
                 Object.DestroyImmediate(theme);
             }
         }
+
+        // A plain (non-component) feedback, to prove injection does not require a scene component.
+        private sealed class PlainRecordingFeedback : ICardChoiceFeedback
+        {
+            public int dragCalls;
+            public void ApplyDrag(CardView card, ChoiceSide side, float fraction) => dragCalls++;
+            public void Reset(CardView card) { }
+        }
+
+        [Test]
+        public void InjectedFeedback_WinsOverSceneComponent()
+        {
+            var card = new GameObject("Card", typeof(RectTransform));
+            var theme = ScriptableObject.CreateInstance<Theme>();
+            try
+            {
+                var view = card.AddComponent<CardView>();
+                var component = card.AddComponent<RecordingFeedback>();   // scene-discovered fallback
+                var injected = new PlainRecordingFeedback();
+                SetField(view, "leftLabel", MakeLabel(card, "ChoiceLeft"));
+                SetField(view, "rightLabel", MakeLabel(card, "ChoiceRight"));
+
+                view.SetChoiceFeedback(injected);   // explicit injection (GameShell path)
+                view.Bind(new EventNodeView("body", "narrator", "Left", "Right"), theme);
+                view.ApplyDrag(ChoiceSide.Right, 1f);
+
+                Assert.AreEqual(1, injected.dragCalls, "the injected feedback received the drag");
+                Assert.AreEqual(0, component.dragCalls, "the scene component was bypassed while an injection is set");
+            }
+            finally
+            {
+                Object.DestroyImmediate(card);
+                Object.DestroyImmediate(theme);
+            }
+        }
     }
 }

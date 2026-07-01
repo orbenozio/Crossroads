@@ -1,6 +1,6 @@
 {
   "name": "com.orbenozio.crossroads",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "displayName": "Crossroads Engine",
   "description": "Data-driven narrative decision engine (Reigns-style swipe + journey/roguelike map) with a reusable procedural UI skin. Ship a new game by swapping Content + Theme - no engine code changes.",
   "unity": "6000.3",
@@ -17,6 +17,11 @@
       "displayName": "Template Game",
       "description": "Minimal Reigns-style game (Content + Theme + wired scene) to clone as a starting point for a new game.",
       "path": "Samples~/Template"
+    },
+    {
+      "displayName": "Medieval Skin",
+      "description": "A ready-made Theme that dresses the neutral engine default in the original medieval look (bronze + gold tokens). Copy into a game and override from there.",
+      "path": "Samples~/Medieval"
     }
   ]
 }

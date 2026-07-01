@@ -26,6 +26,8 @@ namespace Crossroads.UI
         private Color _choiceColor = Color.white;   // theme text color the active hint brightens toward
         private Color _choiceHint = ThemeDefaults.ChoiceHint;   // resting choice-label color (token)
         private Color _choiceGlow = ThemeDefaults.ChoiceGlow;   // active choice glow-halo (token)
+        private Color _plaqueFill = ThemeDefaults.PlaqueFill;   // procedural plaque fill (token)
+        private Color _plaqueEdge = ThemeDefaults.PlaqueEdge;   // procedural plaque engraved edge (token)
         private Image _leftBg, _rightBg;            // choice plaque backgrounds, cached for the drag glow
         private TMP_Text _leftPreview, _rightPreview;   // per-side projected-delta preview, shown above the active plaque
         private RectTransform Rt => _rt != null ? _rt : (_rt = (RectTransform)transform);
@@ -35,16 +37,23 @@ namespace Crossroads.UI
         // none present the engine runs DefaultCardChoiceFeedback. Re-resolved on each Bind so a component
         // added in the scene is picked up. The card's slide/tilt stays engine core (a format affordance).
         private ICardChoiceFeedback _feedback;
+        private ICardChoiceFeedback _injected;   // explicitly injected (GameShell/bootstrap); wins over scene discovery
         private DefaultCardChoiceFeedback _defaultFeedback;
         private ICardChoiceFeedback Feedback
         {
             get
             {
+                if (_injected != null) return _injected;
                 if (_feedback != null) return _feedback;
                 var custom = GetComponent<CardChoiceFeedback>() as ICardChoiceFeedback;
                 return _feedback = custom ?? (_defaultFeedback ?? (_defaultFeedback = new DefaultCardChoiceFeedback()));
             }
         }
+
+        // Inject the choice-feedback explicitly (the preferred, uniform wiring: GameShell passes what the
+        // GameBootstrap supplies). Takes precedence over a CardChoiceFeedback component discovered in the
+        // scene, which stays as a fallback. Pass null to fall back to discovery / the default.
+        public void SetChoiceFeedback(ICardChoiceFeedback feedback) => _injected = feedback;
 
         // Read-only surface the feedback strategy drives: the two choice plaques, their labels, and the
         // theme text color the active hint brightens toward.
@@ -72,6 +81,9 @@ namespace Crossroads.UI
         public void Bind(EventNodeView view, Theme theme)
         {
             _feedback = null;   // re-resolve the pluggable feedback (a game may have added its component)
+            // Resolve the plaque colors up front (StyleChoice below builds the plaques before the palette block).
+            _plaqueFill = theme != null ? theme.PlaqueFill : ThemeDefaults.PlaqueFill;
+            _plaqueEdge = theme != null ? theme.PlaqueEdge : ThemeDefaults.PlaqueEdge;
             if (bodyText != null) bodyText.text = view.Body;
             if (leftLabel != null) leftLabel.text = view.LeftLabel;
             if (rightLabel != null) rightLabel.text = view.RightLabel;
@@ -311,9 +323,9 @@ namespace Crossroads.UI
                 brt.anchorMin = aMin; brt.anchorMax = aMax;
                 brt.offsetMin = Vector2.zero; brt.offsetMax = Vector2.zero;
                 brt.localScale = Vector3.one;
-                bg.sprite = PanelShapes.Plaque;
+                bg.sprite = PanelShapes.PlaqueOf(_plaqueFill, _plaqueEdge);
                 bg.type = Image.Type.Sliced;     // 9-sliced so the engraved border stays crisp at any width
-                bg.color = Color.white;          // the plaque sprite already carries its dark fill + bronze edge
+                bg.color = Color.white;          // the plaque sprite already carries its themed fill + edge
                 bg.raycastTarget = false;
             }
             if (leftSide) _leftBg = bg; else _rightBg = bg;
@@ -401,7 +413,7 @@ namespace Crossroads.UI
                 var go = new GameObject("SpeakerPlate", typeof(RectTransform), typeof(Image));
                 go.transform.SetParent(transform, false);
                 var img = go.GetComponent<Image>();
-                img.sprite = PanelShapes.Plaque;
+                img.sprite = PanelShapes.PlaqueOf(_plaqueFill, _plaqueEdge);
                 img.type = Image.Type.Sliced;
                 img.color = Color.white;
                 img.raycastTarget = false;
@@ -604,23 +616,33 @@ namespace Crossroads.UI
             Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f);
     }
 
-    // A procedural 9-sliced stone plaque: a dark translucent rounded panel with a thin bronze engraved
-    // edge. Used for the choice hints and the speaker nameplate so they read as inset card material.
+    // A procedural 9-sliced stone plaque: a dark translucent rounded panel with a thin engraved edge. Used
+    // for the choice hints and the speaker nameplate so they read as inset card material. Fill + edge colors
+    // are theme-driven (tokens); plaques are cached per color pair so repeated binds do not rebuild the texture.
     internal static class PanelShapes
     {
-        private static Sprite _plaque;
-        public static Sprite Plaque => _plaque != null ? _plaque : (_plaque = BuildPlaque(64, 16));
+        private static readonly System.Collections.Generic.Dictionary<string, Sprite> _plaques = new System.Collections.Generic.Dictionary<string, Sprite>();
+        public static Sprite Plaque => PlaqueOf(ThemeDefaults.PlaqueFill, ThemeDefaults.PlaqueEdge);
 
-        private static Sprite BuildPlaque(int n, int border)
+        // A plaque with the given fill + engraved-edge colors (default look = ThemeDefaults). Cached by the
+        // color pair (quantized to bytes) so a handful of themes never rebuild the texture each bind.
+        public static Sprite PlaqueOf(Color fill, Color edge)
+        {
+            string key = ColorUtility.ToHtmlStringRGBA(fill) + "_" + ColorUtility.ToHtmlStringRGBA(edge);
+            if (_plaques.TryGetValue(key, out var s)) return s;
+            s = BuildPlaque(64, 16, fill, edge);
+            _plaques[key] = s;
+            return s;
+        }
+
+        private static Sprite BuildPlaque(int n, int border, Color fill, Color edge)
         {
             var tex = new Texture2D(n, n, TextureFormat.RGBA32, false, false)
                 { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
             float c = (n - 1) * 0.5f;
             float cr = 13f;              // corner radius
             float bx = (n * 0.5f - 1f) - cr;   // straight half-extent of the inner box
-            float bt = 3f;              // bronze edge thickness
-            var fill = new Color(0.07f, 0.06f, 0.05f, 0.62f);
-            var edge = new Color(0.55f, 0.45f, 0.26f, 0.95f);
+            float bt = 3f;              // engraved edge thickness
             var px = new Color[n * n];
             for (int y = 0; y < n; y++)
                 for (int x = 0; x < n; x++)
@@ -628,7 +650,7 @@ namespace Crossroads.UI
                     float qx = Mathf.Max(Mathf.Abs(x - c) - bx, 0f);
                     float qy = Mathf.Max(Mathf.Abs(y - c) - bx, 0f);
                     float sd = Mathf.Sqrt(qx * qx + qy * qy) - cr;   // rounded-rect SDF (negative inside)
-                    Color col = sd >= -bt ? edge : fill;             // outer band -> bronze, interior -> dark
+                    Color col = sd >= -bt ? edge : fill;             // outer band -> edge color, interior -> fill
                     col.a *= Mathf.Clamp01(0.5f - sd);               // 1px anti-aliased outer edge
                     px[y * n + x] = col;
                 }

@@ -27,6 +27,8 @@ namespace Crossroads.UI
         public OptionalColor choiceHint;   // resting choice-label color; unset -> neutral (ThemeDefaults)
         public OptionalColor choiceGlow;   // active choice glow-halo; unset -> neutral (ThemeDefaults)
         public OptionalColor hudPlate;     // meter plate fill; unset -> derived from `background` (legacy formula)
+        public OptionalColor plaqueFill;   // procedural stone-plaque fill; unset -> neutral dark (ThemeDefaults)
+        public OptionalColor plaqueEdge;   // procedural stone-plaque engraved edge; unset -> neutral grey (medieval skin = bronze)
 
         [Header("Art")]
         public Sprite keyArt;      // optional key-art backdrop for the menu screens; null = flat panel
@@ -70,6 +72,8 @@ namespace Crossroads.UI
         public Color ChoiceHint => choiceHint.Or(ThemeDefaults.ChoiceHint);
         public Color ChoiceGlow => choiceGlow.Or(ThemeDefaults.ChoiceGlow);
         public Color HudPlate => hudPlate.Or(ThemeDefaults.HudPlate(background));
+        public Color PlaqueFill => plaqueFill.Or(ThemeDefaults.PlaqueFill);
+        public Color PlaqueEdge => plaqueEdge.Or(ThemeDefaults.PlaqueEdge);
 
         // Resolved medallion metrics (unset -> ThemeDefaults). Ring color defers to the `ring` role.
         public float MedallionSize => medallion.size.Or(ThemeDefaults.PortraitSize);

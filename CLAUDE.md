@@ -24,11 +24,12 @@ orbenozio/refugee-road      game project (journey / map)
 - Two formats share one `EventEngine`: **Reigns** (swipe a card, 4 meters, break = game over) and
   **journey** (same engine wrapped in a node map with a goal). Journey adds only `map.json`.
 
-Current engine: **v0.4.0**. New games should pin `#v0.4.0` or later (>= v0.1.1 auto-imports TMP - see Gotchas).
-v0.4.0 makes the visual defaults data-driven (a semantic-role palette + `MedallionStyle`/`MeterStyle` component
-styles + a gameplay backdrop on the `Theme`), adds a pluggable `CardChoiceFeedback` hook to replace the
-choice-selection effect, and moves the engine's out-of-box default to a **neutral** look - a strong art
-direction ships as a skin `Theme` asset, not the default. Overrides are explicit (`OptionalFloat`/
+Current engine: **v0.5.0**. New games should pin `#v0.5.0` or later (>= v0.1.1 auto-imports TMP - see Gotchas).
+The theming is fully data-driven: a semantic-role palette (incl. `plaqueFill`/`plaqueEdge` so even the
+procedural plaques repaint) + `MedallionStyle`/`MeterStyle` component styles + a gameplay backdrop on the
+`Theme`; a pluggable `CardChoiceFeedback` hook (inject it via `GameShell.Config.choiceFeedback`, or a scene
+component as fallback) replaces the choice-selection effect. The engine out-of-box default is **neutral** - the
+original medieval look ships as the `Samples~/Medieval` skin `Theme`. Overrides are explicit (`OptionalFloat`/
 `OptionalColor`; unset = inherit the engine default). See `unity-package/THEMING.md` for the decision rule
 (token / style-struct / hook / core), the token model, and the compatibility policy.
 

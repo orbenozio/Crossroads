@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fccb522c64eb14fbbb14981ff77a48, type: 3}
+  m_Name: Medieval
+  m_EditorClassIdentifier: Crossroads.UI::Crossroads.UI.Theme
+  background: {r: 0.12, g: 0.12, b: 0.14, a: 1}
+  card: {r: 0.2, g: 0.2, b: 0.24, a: 1}
+  text: {r: 1, g: 1, b: 1, a: 1}
+  accent: {r: 0.62, g: 0.5, b: 0.28, a: 1}
+  approaching: {r: 0.9, g: 0.72, b: 0.25, a: 1}
+  willBreak: {r: 0.82, g: 0.3, b: 0.3, a: 1}
+  textMuted:
+    set: 0
+    value: {r: 0, g: 0, b: 0, a: 0}
+  ring:
+    set: 1
+    value: {r: 0.62, g: 0.5, b: 0.28, a: 1}
+  divider:
+    set: 1
+    value: {r: 0.85, g: 0.68, b: 0.28, a: 1}
+  choiceHint:
+    set: 1
+    value: {r: 1, g: 0.9, b: 0.62, a: 1}
+  choiceGlow:
+    set: 1
+    value: {r: 1, g: 0.82, b: 0.4, a: 1}
+  hudPlate:
+    set: 0
+    value: {r: 0, g: 0, b: 0, a: 0}
+  plaqueFill:
+    set: 0
+    value: {r: 0, g: 0, b: 0, a: 0}
+  plaqueEdge:
+    set: 1
+    value: {r: 0.55, g: 0.45, b: 0.26, a: 0.95}
+  keyArt: {fileID: 0}
+  logo: {fileID: 0}
+  cardArt: {fileID: 0}
+  meterFrame: {fileID: 0}
+  speakerFrame: {fileID: 0}
+  buttonSprite: {fileID: 0}
+  menuIcon: {fileID: 0}
+  loadingArt: {fileID: 0}
+  gameplayArt: {fileID: 0}
+  music: {fileID: 0}
+  musicMenu: {fileID: 0}
+  swipeSfx: {fileID: 0}
+  cardSfx: {fileID: 0}
+  clickSfx: {fileID: 0}
+  medallion:
+    size:
+      set: 0
+      value: 0
+    ringColor:
+      set: 0
+      value: {r: 0, g: 0, b: 0, a: 0}
+    ringThickness:
+      set: 0
+      value: 0
+    innerFraction:
+      set: 0
+      value: 0
+  meter:
+    iconSize:
+      set: 0
+      value: 0
+    frameSize:
+      set: 0
+      value: 0
+    iconTint:
+      set: 1
+      value: {r: 0.72, g: 0.64, b: 0.48, a: 1}
+  font: {fileID: 0}
+  tmpFont: {fileID: 0}
+  rightToLeft: 0
+  resourceLabels: []
+  speakers: []
+  endingArt: []

@@ -54,6 +54,11 @@ namespace Crossroads.UI
         public static readonly Color WarmPlaque = new Color(0.98f, 0.98f, 1.0f, 1f);    // faint lift on the active plaque
         public static readonly Color DimPlaque = new Color(0.5f, 0.48f, 0.48f, 1f);     // the non-active plaque recedes
 
+        // Procedural stone-plaque colors (choice hints + speaker nameplate). The dark fill is neutral; the
+        // engraved edge defaults to a neutral grey - the medieval skin repaints the edge bronze.
+        public static readonly Color PlaqueFill = new Color(0.07f, 0.06f, 0.05f, 0.62f);
+        public static readonly Color PlaqueEdge = new Color(0.50f, 0.50f, 0.55f, 0.95f);
+
         // A slightly-muted variant of a text color (textMuted fallback).
         public static Color Muted(Color text) => new Color(text.r, text.g, text.b, text.a * 0.7f);
 

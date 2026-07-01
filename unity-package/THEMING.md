@@ -101,12 +101,13 @@ a `Theme` asset via the bridge `create_theme` + `set_*` tools; do not hand-write
 | `divider` | `(0.85, 0.68, 0.28)` gold |
 | `choiceHint` | `(1.0, 0.90, 0.62)` warm gold |
 | `choiceGlow` | `(1.0, 0.82, 0.40)` bright gold |
+| `plaqueEdge` | `(0.55, 0.45, 0.26)` bronze engraved edge |
 | `meter.iconTint` | `(0.72, 0.64, 0.48)` antique bronze |
 
-Note: the rest of the medieval signature still lives in procedural texture generators (`PanelShapes` bronze
-plaque edge) rather than in color tokens, so a skin cannot yet fully repaint those. Tokenizing the
-`PanelShapes` fill/edge colors is the tracked remaining step to make the neutral/skin split complete; until
-then those plaques render bronze regardless of the skin.
+This exact skin ships as a ready sample at `Samples~/Medieval/Medieval.asset` (import it via the Package
+Manager samples, or copy the asset into a game and start from it). The procedural plaque colors are now
+tokens too (`plaqueFill` / `plaqueEdge`), so a skin fully repaints the plaques - the neutral/skin split is
+complete, no medieval signature remains hardcoded.
 
 ---
 

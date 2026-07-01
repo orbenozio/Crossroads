@@ -12,7 +12,7 @@ namespace UnityAgentBridge.Editor.CustomTools
     // OptionalColor wrappers. Color is r,g,b,a in 0..1. Pass clear=true to unset an optional role (inherit).
     public static class set_theme_role
     {
-        [McpTool("set_theme_role", "Set a Theme palette color role (role=background|card|text|accent|approaching|willBreak|ring|divider|choiceHint|choiceGlow|hudPlate|textMuted; r,g,b,a in 0..1; clear=true unsets an optional role)")]
+        [McpTool("set_theme_role", "Set a Theme palette color role (role=background|card|text|accent|approaching|willBreak|ring|divider|choiceHint|choiceGlow|hudPlate|textMuted|plaqueFill|plaqueEdge; r,g,b,a in 0..1; clear=true unsets an optional role)")]
         public static object Invoke(string themePath = "", string role = "", float r = 0f, float g = 0f, float b = 0f, float a = 1f, bool clear = false)
         {
             if (string.IsNullOrEmpty(themePath)) throw new Exception("themePath is required");
@@ -42,6 +42,8 @@ namespace UnityAgentBridge.Editor.CustomTools
                 case "choicehint":   theme.choiceHint = opt; break;
                 case "choiceglow":   theme.choiceGlow = opt; break;
                 case "hudplate":     theme.hudPlate = opt; break;
+                case "plaquefill":   theme.plaqueFill = opt; break;
+                case "plaqueedge":   theme.plaqueEdge = opt; break;
                 default: throw new Exception("unknown role: " + role);
             }
             if (!optional && clear) throw new Exception("clear is only valid for optional roles (a base role is always set)");
