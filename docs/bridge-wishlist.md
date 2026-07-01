@@ -4,6 +4,15 @@
 עוברים עליה בבאצ'ים מסודרים; מועמדים עשויים להיכנס ל-package של unity-agent-bridge.
 כל פריט עם העדות הקונקרטית (מה נכשל / כמה צעדים זה עלה).
 
+## מומש בפרויקט (engine v0.4.0 - כלי theming חדשים)
+- [x] **`set_theme_role`** - הגדרת צבע-role ב-Theme (base: background/card/text/accent/approaching/willBreak;
+  optional overrides: ring/divider/choiceHint/choiceGlow/hudPlate/textMuted). עדות: פלטת ה-roles החדשה של
+  v0.4.0 עוטפת צבעים ב-`OptionalColor`, ו-set_property הגנרי לא מגיע ל-wrapper. מומש כ-custom tool.
+- [x] **`set_component_style`** - הגדרת מטריקה ב-structs `medallion`/`meter` (size/ringThickness/innerFraction/
+  ringColor, iconSize/frameSize/iconTint). עדות: השדות הם `OptionalFloat`/`OptionalColor` מקוננים ב-struct;
+  ה-set_property הגנרי לא מגיע אליהם. מומש כ-custom tool. (מועמד להכללה ב-package של הברידג' אם יופיע דפוס דומה.)
+- [x] **`set_theme_art` + `gameplayArt`** - נוסף slot ל-backdrop של מסך-המשחק.
+
 ## נכנס כבר ל-v0.2.0
 - `create_canvas` - היה: בניית Canvas ב-5 צעדים שמגדירה World Space כברירת-מחדל.
 - `set_color` (hex) - היה: צבע דרך JSON עם escaping של PowerShell.
