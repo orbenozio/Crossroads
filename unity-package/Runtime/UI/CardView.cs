@@ -412,13 +412,16 @@ namespace Crossroads.UI
             {
                 var go = new GameObject("SpeakerPlate", typeof(RectTransform), typeof(Image));
                 go.transform.SetParent(transform, false);
-                var img = go.GetComponent<Image>();
-                img.sprite = PanelShapes.PlaqueOf(_plaqueFill, _plaqueEdge);
-                img.type = Image.Type.Sliced;
-                img.color = Color.white;
-                img.raycastTarget = false;
                 plate = (RectTransform)go.transform;
             }
+            // (Re)apply the plaque sprite every call, not just on create - a reused plate can hold a stale/null
+            // sprite (e.g. after the scene reloads on entering Play and the runtime procedural sprite is gone),
+            // which renders as a white quad. StyleChoice does the same for the choice plaques.
+            var plateImg = plate.GetComponent<Image>();
+            plateImg.sprite = PanelShapes.PlaqueOf(_plaqueFill, _plaqueEdge);
+            plateImg.type = Image.Type.Sliced;
+            plateImg.color = Color.white;
+            plateImg.raycastTarget = false;
             // Keep the plate directly BEHIND the name, deterministically. SetSiblingIndex(nameIndex) alone
             // is order-dependent: when the plate starts earlier in the hierarchy (as a scene/prefab-baked
             // plate does) it lands in FRONT of the name and covers the inscription - the scene-vs-play swap.
