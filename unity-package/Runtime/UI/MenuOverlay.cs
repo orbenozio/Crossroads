@@ -272,9 +272,13 @@ namespace Crossroads.UI
         // with the end screen so every button in the game looks and reacts the same.
         internal static void ConfigureButtonVisual(Image img, Button btn, Theme theme, bool primary)
         {
-            img.sprite = PanelShapes.Plaque;
-            img.type = Image.Type.Sliced;   // 9-sliced so the bronze edge stays crisp at any button size
-            img.color = Color.white;        // the plaque sprite carries its own dark fill + bronze edge
+            // A game's own 9-sliced button plate when it has one, else the procedural plaque drawn in the
+            // theme's plaque tokens (so menu buttons follow the skin instead of a hardcoded look).
+            img.sprite = theme != null && theme.buttonSprite != null
+                ? theme.buttonSprite
+                : (theme != null ? PanelShapes.PlaqueOf(theme.PlaqueFill, theme.PlaqueEdge) : PanelShapes.Plaque);
+            img.type = Image.Type.Sliced;   // 9-sliced so the engraved edge stays crisp at any button size
+            img.color = Color.white;        // the plate sprite carries its own fill + edge
             // Bases sit below white so the bronze edge has headroom to brighten on hover and darken on press.
             ApplyButtonStates(btn, primary
                 ? new Color(0.88f, 0.84f, 0.76f, 1f)    // primary leads (brighter bronze edge)

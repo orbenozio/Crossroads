@@ -612,8 +612,15 @@ namespace Crossroads.UI
         private static Texture2D NewTex(int n) =>
             new Texture2D(n, n, TextureFormat.RGBA32, false, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
 
-        private static Sprite ToSprite(Texture2D tex, int n) =>
-            Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f);
+        private static Sprite ToSprite(Texture2D tex, int n)
+        {
+            // HideAndDontSave so the tex + sprite survive a domain reload; else the Editor destroys them on
+            // recompile and the cached Image.sprite becomes null -> a solid white quad while developing.
+            tex.hideFlags = HideFlags.HideAndDontSave;
+            var sprite = Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            return sprite;
+        }
     }
 
     // A procedural 9-sliced stone plaque: a dark translucent rounded panel with a thin engraved edge. Used
@@ -655,8 +662,11 @@ namespace Crossroads.UI
                     px[y * n + x] = col;
                 }
             tex.SetPixels(px); tex.Apply(false, false);
-            return Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f, 0,
+            tex.hideFlags = HideFlags.HideAndDontSave;   // survive domain reload (see ToSprite note)
+            var sprite = Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f, 0,
                 SpriteMeshType.FullRect, new Vector4(border, border, border, border));
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            return sprite;
         }
     }
 
@@ -684,7 +694,10 @@ namespace Crossroads.UI
                     px[y * n + x] = new Color(1f, 1f, 1f, Mathf.Clamp01(half - d + 0.5f));   // 1px AA edge
                 }
             tex.SetPixels(px); tex.Apply(false, false);
-            return Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f);
+            tex.hideFlags = HideFlags.HideAndDontSave;   // survive domain reload (see ToSprite note)
+            var sprite = Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            return sprite;
         }
 
         private static float SegDist(Vector2 p, Vector2 a, Vector2 b)

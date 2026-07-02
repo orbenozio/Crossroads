@@ -24,7 +24,7 @@ orbenozio/refugee-road      game project (journey / map)
 - Two formats share one `EventEngine`: **Reigns** (swipe a card, 4 meters, break = game over) and
   **journey** (same engine wrapped in a node map with a goal). Journey adds only `map.json`.
 
-Current engine: **v0.6.0**. New games should pin `#v0.6.0` or later (>= v0.1.1 auto-imports TMP - see Gotchas).
+Current engine: **v0.6.1**. New games should pin `#v0.6.1` or later (>= v0.1.1 auto-imports TMP - see Gotchas).
 The loading-bar marker is theme-driven too (`theme.loadingMarker`; null = a neutral procedural seal, not the
 old crown - a game supplies its own marker art), and the loading fill/text follow the accent.
 The theming is fully data-driven: a semantic-role palette (incl. `plaqueFill`/`plaqueEdge` so even the

@@ -341,7 +341,12 @@ namespace Crossroads.UI
                 for (int y = 0; y < 4; y++) px[y * n + x] = c;
             }
             tex.SetPixels(px); tex.Apply(false, false);
-            return Sprite.Create(tex, new Rect(0, 0, n, 4), new Vector2(0.5f, 0.5f), 100f);
+            // HideAndDontSave so the tex + sprite survive a domain reload; else the Editor destroys them on
+            // recompile and the cached Image.sprite becomes null -> a solid white bar while developing.
+            tex.hideFlags = HideFlags.HideAndDontSave;
+            var sprite = Sprite.Create(tex, new Rect(0, 0, n, 4), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            return sprite;
         }
     }
 }
