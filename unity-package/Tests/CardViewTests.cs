@@ -68,6 +68,28 @@ namespace Crossroads.Engine.Tests
             }
         }
 
+        [Test]
+        public void Bind_BodyBand_ClearsChoiceAndDeltaBands()
+        {
+            var card = new GameObject("Card", typeof(RectTransform));
+            var theme = ScriptableObject.CreateInstance<Theme>();
+            try
+            {
+                var view = card.AddComponent<CardView>();
+                var body = MakeLabel(card, "Body");
+                SetField(view, "bodyText", body);
+                // A long body (the failing supply_boat case was 182 chars) must not collide with the UI below it.
+                view.Bind(new EventNodeView(new string('x', 182), "narrator", "Left", "Right"), theme);
+                // Choice plaques top at y 0.235, the drag delta-preview band at 0.315; the body must start above both.
+                Assert.GreaterOrEqual(body.rectTransform.anchorMin.y, 0.315f, "body band bottom clears the delta-preview + choice bands");
+            }
+            finally
+            {
+                Object.DestroyImmediate(card);
+                Object.DestroyImmediate(theme);
+            }
+        }
+
         // Records calls so the test can assert CardView routed the effect here instead of the built-in one.
         private sealed class RecordingFeedback : CardChoiceFeedback
         {

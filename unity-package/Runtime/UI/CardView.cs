@@ -114,10 +114,10 @@ namespace Crossroads.UI
             if (bodyText != null)
             {
                 var brt = bodyText.rectTransform;
-                // Portrait card: a taller band just under the medallion/name, so the narration fills the
-                // space instead of floating low with empty gaps above and below it (ux re-review round 2).
-                brt.anchorMin = new Vector2(0.14f, portrait ? 0.24f : 0.31f);
-                brt.anchorMax = new Vector2(0.86f, portrait ? 0.54f : 0.80f);
+                // Band bottom raised to 0.33 so a long body clears the choice plaques (y 0.145-0.235) AND the
+                // drag delta-preview band (y 0.243-0.315); the body auto-sizes down to fit the tighter band.
+                brt.anchorMin = new Vector2(0.14f, 0.33f);
+                brt.anchorMax = new Vector2(0.86f, portrait ? 0.55f : 0.80f);
             }
 
             // Choice hints: an engraved stone plaque per side, with the label auto-sized + wrapped so a
